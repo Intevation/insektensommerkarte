@@ -134,7 +134,6 @@ map.on('load', function() {
   function makeGeoJSON(data) {
     var geojson = GeoJSON.parse(data.beobachtungen, { Point: ['lat', 'lng'] });
     var trimmed = gp(geojson, 6);
-    console.log(trimmed);
 
     map.addSource('funde', {
       'type': 'geojson',
