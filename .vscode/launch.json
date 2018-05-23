@@ -1,0 +1,13 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Launch localhost",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "url": "http://localhost:9000/",
+            "webRoot": "${workspaceRoot}/"
+        }
+    ]
+}

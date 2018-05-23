@@ -1,0 +1,48 @@
+<header>
+    <span>Details Funde</span>
+    <a id="details-close" href="#" uk-close></a>
+</header>
+<table>
+    {{#artname}}
+    <tr id="detail-fund-artname" class="detail-fund">
+        <td>Artname:</td>
+        <td>{{artname}}</td>
+    </tr>
+    {{/artname}}
+    {{#gattung}}
+    <tr id="detail-fund-gattung" class="detail-fund">
+        <td>Gattung:</td>
+        <td>{{gattung}}</td>
+    </tr>
+    {{/gattung}}
+    {{#taxon}}
+    <tr id="detail-fund-gattung" class="detail-fund">
+        <td>Taxon:</td>
+        <td>{{taxon}}</td>
+    </tr>
+    {{/taxon}}
+    {{#anzahl}}
+    <tr id="detail-fund-anzahl" class="detail-fund">
+        <td>Anzahl:</td>
+        <td>{{anzahl}}</td>
+    </tr>
+    {{/anzahl}}
+    {{#datum}}
+    <tr id="detail-fund-datum" class="detail-fund">
+        <td>Datum:</td>
+        <td>{{datum}}</td>
+    </tr>
+    {{/datum}}
+    {{#fundort}}
+    <tr id="detail-fund-fundort" class="detail-fund">
+        <td>Fundort:</td>
+        <td>{{fundort}}</td>
+    </tr>
+    {{/fundort}}
+    {{#bundesland}}
+    <tr id="detail-fund-bundesland" class="detail-fund">
+        <td>Bundesland:</td>
+        <td>{{bundesland}}</td>
+    </tr>
+    {{/bundesland}}
+</table>

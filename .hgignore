@@ -1,0 +1,12 @@
+# use glob syntax.
+syntax: glob
+
+dist/**
+node_modules/**
+tiles/**
+data_orig/**
+.cache/**
+
+## switch to regexp syntax.
+#syntax: regexp
+#^\.pc/

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Insektensommer</title>
+    <link rel="stylesheet" type="text/css" href="dist/vendor.css" />
+    <link rel="stylesheet" type="text/css" href="dist/main.css" />
+    <!--  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script> -->
+    <!-- script src="https://maps.googleapis.com/maps/api/js" async defer></script-->
+</head>
+
+<body>
+    <div id="app-container">
+        <div id="map"></div>
+        <div id="sidebar">
+            <header>
+                <div class="logo"><img src="https://www.nabu.de/imperia/md/nabu/images/nabu/veranstaltungen/aktionen/180305_nabu_insektensommer_banner_940x300px_2_.png"></div>
+            </header>
+            <div class="sidebar-body">
+                <p class="intro-sidebar"></p>
+                <div class="sidebar-accordeon">
+                    <ul uk-accordion>
+                        <li class="uk-open">
+                            <h3 class="uk-accordion-title">Insektensommer</h3>
+                            <div class="uk-accordion-content">
+                                <div class="layer insektensommer layer-legend">
+                                    <div class="title">
+                                        <span class="circle1">Alle Meldungen</span>
+                                    </div>
+                                    <div class="switch">
+                                        <input type="checkbox" name="insektensommer" id="meldungen" class="ios-toggle" checked/>
+                                        <label for="meldungen" class="checkbox-label" data-off="aus" data-on="an"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <h3 class="uk-accordion-title">Meßtischblatt
+                            <span class="tooltip" title="&copy; Arbeitskreis Heimische Orchideen Baden-Württemberg" uk-tooltip="pos: top" uk-icon="icon: info; ratio: 0.6"></span>
+
+                            </h3>
+                            <div class="uk-accordion-content">
+                                <div class="layer messtischblatt layer-legend">
+                                    <div class="title">
+                                        <span>Blattschnitte (TK 25)</span>
+                                        <span class="tooltip" title="Blattschnitte (TK 25) im Maßstab 1:25.000"
+                                            uk-tooltip="pos: top" uk-icon="icon: info; ratio: 0.6"></span>
+                                    </div>
+                                    <div class="switch">
+                                        <input type="checkbox" name="messtischblatt" id="tk25" class="ios-toggle" />
+                                        <label for="tk25" class="checkbox-label" data-off="aus" data-on="an"></label>
+                                    </div>
+                                </div>
+                                <div class="legend"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <h3 class="uk-accordion-title">Hintergrundkarten</h3>
+                            <div class="uk-accordion-content">
+                                <div class="layer osm">
+                                    <div class="title">
+                                        <span>OpenStreetMap</span>
+                                        <span class="tooltip" title="&copy; OpenStreetMap"
+                                            uk-tooltip="pos: top" uk-icon="icon: info; ratio: 0.6"></span>
+                                    </div>
+                                    <div class="switch">
+                                        <input type="checkbox" name="baselayer" id="osm" class="ios-toggle" checked/>
+                                        <label for="osm" class="checkbox-label" data-off="aus" data-on="an"></label>
+                                    </div>
+                                </div>
+                                <div class="layer satellite">
+                                    <div class="title">
+                                        <span>Satellit</span>
+                                        <span class="tooltip" title="Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017)"
+                                            uk-tooltip="pos: top" uk-icon="icon: info; ratio: 0.6"></span>
+                                    </div>
+                                    <div class="switch">
+                                        <input type="checkbox" name="baselayer" id="satellite" class="ios-toggle" />
+                                        <label for="satellite" class="checkbox-label" data-off="aus" data-on="an"></label>
+                                    </div>
+                                </div>
+                                <div class="layer stamen">
+                                    <div class="title">
+                                        <span>Schwarz/Weiß</span>
+                                        <span class="tooltip" title="Map tiles by Stamen Design, CC BY 3.0 &mdash; Map data &copy; OpenStreetMap"
+                                            uk-tooltip="pos: top" uk-icon="icon: info; ratio: 0.6"></span>
+                                    </div>
+                                    <div class="switch">
+                                        <input type="checkbox" name="baselayer" id="stamen" class="ios-toggle" />
+                                        <label for="stamen" class="checkbox-label" data-off="aus" data-on="an"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--pre id='features'></pre-->
+        <aside id="details">
+        </aside>
+    </div>
+</body>
+
+<script src="dist/vendor.js"></script>
+<script src="dist/main.js"></script>
+
+</html>

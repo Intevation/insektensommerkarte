@@ -1,0 +1,40 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jquery": true
+  },
+  "extends": "standard",
+  "globals": {
+    "L": false,
+    "Clusterize": false,
+    "Ext": false,
+    "MapboxDraw": false,
+    "NProgress": false,
+    "Vue": false,
+    "ace": false,
+    "mapboxgl": false,
+    "moment": false,
+    "turf": false,
+    "ol": false,
+    "csv2geojson": false,
+    "XLSX": false,
+    "Werkstatt": false
+  },
+  "rules": {
+    "no-new": 0,
+    "semi": 0,
+    "no-spaced-func": 1,
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "new-cap": [
+      "warn",
+      {
+        "properties": true
+      }
+    ]
+  }
+}
