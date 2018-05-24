@@ -5,6 +5,11 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+var childProcess = require('child_process');
+// var VERSION = childProcess.execSync("git rev-parse HEAD").toString().trim();
+var HGVERSION = childProcess.execSync('hg id -i').toString().trim();
 
 module.exports = function(env, argv) {
   console.log(argv);
@@ -82,10 +87,15 @@ module.exports = function(env, argv) {
         }, {
           test: /\.html$/,
           use: {
-            loader: 'mustache-loader'
+            loader: 'mustache-loader',
             // loader: 'mustache?minify'
             // loader: 'mustache?{ minify: { removeComments: false } }'
             // loader: 'mustache?noShortcut'
+            options: {
+              render: {
+                hgversion: JSON.stringify(HGVERSION)
+              }
+            }
           }
         }
       ]
@@ -129,6 +139,10 @@ module.exports = function(env, argv) {
         test: /\.js$|\.html$/,
         threshold: 10240,
         minRatio: 0.8
+      }),
+      new HtmlWebpackPlugin({
+        template: 'index.html',
+        inject: 'body'
       })
     ]
   };
