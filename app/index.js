@@ -30,33 +30,35 @@ $('#sidebar').css('left', '50px');
 var map = new mapboxgl.Map({
   container: 'map', // container id
   style: {
-    'version': 8,
-    'sources': {
-      'osm': {
-        'type': 'raster',
+    glyphs: 'fonts/{fontstack}/{range}.pbf',
+    version: 8,
+    sources: {
+      osm: {
+        type: 'raster',
         // point to our third-party tiles. Note that some examples
         // show a "url" property. This only applies to tilesets with
         // corresponding TileJSON (such as mapbox tiles).
-        'tiles': [
+        tiles: [
           'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
           'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
           'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
         ],
-        'tileSize': 256
+        tileSize: 256
       }
     },
-    'layers': [{
-      'id': 'osm',
-      'type': 'raster',
-      'source': 'osm',
-      'minzoom': 0,
-      'maxzoom': 18
-    }]
+    layers: [
+      {
+        id: 'osm',
+        type: 'raster',
+        source: 'osm',
+        minzoom: 0,
+        maxzoom: 18
+      }
+    ]
   },
   center: [6.402, 51.638],
   zoom: 5.33,
   attributionControl: false
-
 });
 
 map.on('mousemove', function(ev) {
@@ -105,6 +107,8 @@ map.on('click', function(ev) {
       });
     } else {
       $('.detail-tk25').hide();
+      // TODO:hier wikipedia infos rein.
+      console.log(props);
       $('#details').html(fundTemplate(props));
       $('.detail-totfund').show();
       var outerHeightFund = $('#details').outerHeight(!0);
@@ -165,12 +169,14 @@ map.on('load', function() {
     }
   });
 
+  map.addSource('tk25_source', {
+    type: 'geojson',
+    data: 'data/tk25.geojson'
+  });
+
   map.addLayer({
     id: 'tk25',
-    source: {
-      type: 'geojson',
-      data: 'data/tk25.geojson'
-    },
+    source: 'tk25_source',
     type: 'fill',
     layout: {
       visibility: 'none'
@@ -182,13 +188,44 @@ map.on('load', function() {
     }
   });
 
+  map.addLayer({
+    id: 'tk251',
+    type: 'symbol',
+    source: 'tk25_source',
+    filter: ['in', '$type', 'LineString', 'Point', 'Polygon'],
+    layout: {
+      visibility: 'none',
+      'text-field': [
+        'step',
+        ['zoom'],
+        ['to-string', null],
+        8,
+        ['to-string', ['get', 'TKnr']],
+        9,
+        ['concat', ['to-string', ['get', 'Name']], ' \n', ['get', 'TKnr']],
+        12,
+        ['to-string', null]
+      ],
+      'text-max-width': 4,
+      'text-padding': 5,
+      'text-size': 16,
+      'text-font': ['Open Sans Regular'],
+      'symbol-avoid-edges': true
+    },
+    paint: {
+      'text-translate-anchor': 'viewport'
+    }
+  });
+
   $('input[name=messtischblatt]').change(function() {
     // Deal with actual checkbox
     // var id = $(this).attr("id");
     if ($(this).is(':checked')) {
       map.setLayoutProperty('tk25', 'visibility', 'visible');
+      map.setLayoutProperty('tk251', 'visibility', 'visible');
     } else {
       map.setLayoutProperty('tk25', 'visibility', 'none');
+      map.setLayoutProperty('tk251', 'visibility', 'visible');
     }
   });
 
