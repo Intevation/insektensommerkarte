@@ -47,7 +47,7 @@ module.exports = function(env, argv) {
                 'targets': {
                   // https://github.com/browserslist/browserslist
                   // http://browserl.ist/?q=last+1+years
-                  'browsers': ['last 1 years']
+                  'browsers': ['last 1 years', 'ie 11']
                 }
               }
               ]
