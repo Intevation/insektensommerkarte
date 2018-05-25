@@ -1,49 +1,33 @@
 @import "~normalize.css";
-
 /* --- FONTS --- */
-
 
 /* Font families*/
 
-
 /* Font sizes*/
-
 
 /* Font sizes - mobile */
 
-
 /* Font weights*/
-
 
 /* Line height*/
 
-
 /* --- COLORS --- */
-
 
 /* Brand Colors */
 
-
 /* Background Colors */
-
 
 /* Text Colors */
 
-
 /* Button Colors */
-
 
 /* Map Colors */
 
-
 /* --- PADDINGS & MARGINS --- */
-
 
 /* Padding */
 
-
 /* Margin */
-
 
 /* Border radii*/
 
@@ -148,7 +132,6 @@
     width: 20px;
     color: #B8E986;
 }
-
 
 /* GREEN CHECKBOX */
 
@@ -706,8 +689,9 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     height: 10px;
     border-radius: 20px;
     margin-left: 7px;
-    background:#762a83;
+    background: #762a83;
 }
+
 .circle2::after {
     content: "";
     display: inline-block;
@@ -715,8 +699,9 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     height: 10px;
     border-radius: 20px;
     margin-left: 7px;
-    background:#e9a3c9;
+    background: #e9a3c9;
 }
+
 .circle3::after {
     content: "";
     display: inline-block;
@@ -726,6 +711,7 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     margin-left: 7px;
     background: #3288bd;
 }
+
 .mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
     display: none;
     }
