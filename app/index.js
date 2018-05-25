@@ -107,16 +107,45 @@ map.on('click', function(ev) {
       });
     } else {
       $('.detail-tk25').hide();
-      // TODO:hier wikipedia infos rein.
       console.log(props);
-      $('#details').html(fundTemplate(props));
-      $('.detail-totfund').show();
-      var outerHeightFund = $('#details').outerHeight(!0);
-      $('#details').css('bottom', 2 * -outerHeightFund);
-      $('#details-close').click(function() {
-        $('#details').css('bottom', -outerHeightFund);
+
+      var url = 'https://de.wikipedia.org/w/api.php';
+      $.ajax({
+        dataType: 'json',
+        url: url,
+        method: 'GET',
+        headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
+        // https://de.wikipedia.org/w/api.php
+        data: {
+          action: 'query',
+          format: 'json',
+          formatversion: 2,
+          prop: 'extracts|pageimages|info|redirects',
+          pithumbsize: 300,
+          exintro: true,
+          inprop: 'url',
+          redirects: true,
+          origin: '*',
+          titles: props.gattung + ' ' + props.taxon
+        },
+        cache: true,
+        success: function(data) {
+          if (data.query) {
+            props.beschreibung = data.query.pages[0].extract.trim();
+            if (data.query.pages[0].thumbnail !== undefined) {
+              props.bild = data.query.pages[0].thumbnail.source;
+            }
+          }
+          $('#details').html(fundTemplate(props));
+        }
       });
     }
+    $('.detail-totfund').show();
+    var outerHeightFund = $('#details').outerHeight(!0);
+    $('#details').css('bottom', 2 * -outerHeightFund);
+    $('#details-close').click(function() {
+      $('#details').css('bottom', -outerHeightFund);
+    });
     $('#details').css('bottom', '90px');
   } else {
     let oh = $('#details').outerHeight(!0);

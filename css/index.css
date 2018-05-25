@@ -714,4 +714,20 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
 
 .mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
     display: none;
-    }
+}
+
+#detail-fund-artname {
+    margin: 5% 5% 5% 10%;
+}
+
+#detail-fund-bild {
+    margin: 5% 5% 5% 10%;
+    display: block;
+}
+
+#detail-fund-beschreibung {
+    margin: 5% 5% 5% 10%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 200px;
+}

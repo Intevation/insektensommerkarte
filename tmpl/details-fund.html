@@ -2,25 +2,18 @@
     <span>Details Funde</span>
     <a id="details-close" href="#" uk-close></a>
 </header>
+<div id="detail-fund-artname">
+<b>{{artname}}</b> ({{gattung}} {{taxon}})
+</div>
+<div id="detail-fund-bild">
+{{#bild}}
+<img src={{bild}}>
+{{/bild}}
+</div>
+{{#beschreibung}}
+<div id="detail-fund-beschreibung">{{&beschreibung}}</div>
+{{/beschreibung}}
 <table>
-    {{#artname}}
-    <tr id="detail-fund-artname" class="detail-fund">
-        <td>Artname:</td>
-        <td>{{artname}}</td>
-    </tr>
-    {{/artname}}
-    {{#gattung}}
-    <tr id="detail-fund-gattung" class="detail-fund">
-        <td>Gattung:</td>
-        <td>{{gattung}}</td>
-    </tr>
-    {{/gattung}}
-    {{#taxon}}
-    <tr id="detail-fund-gattung" class="detail-fund">
-        <td>Taxon:</td>
-        <td>{{taxon}}</td>
-    </tr>
-    {{/taxon}}
     {{#anzahl}}
     <tr id="detail-fund-anzahl" class="detail-fund">
         <td>Anzahl:</td>
