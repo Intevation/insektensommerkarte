@@ -10,22 +10,25 @@ import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import '../node_modules/uikit/dist/css/uikit.css';
 import '../css/index.css';
 
-const tk25Template = require('../tmpl/details-tk25.html');
-const fundTemplate = require('../tmpl/details-fund.html');
-
-const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
-
 // from uikit-icons.js
 var info = '<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M12.13,11.59 C11.97,12.84 10.35,14.12 9.1,14.16 C6.17,14.2 9.89,9.46 8.74,8.37 C9.3,8.16 10.62,7.83 10.62,8.81 C10.62,9.63 10.12,10.55 9.88,11.32 C8.66,15.16 12.13,11.15 12.14,11.18 C12.16,11.21 12.16,11.35 12.13,11.59 C12.08,11.95 12.16,11.35 12.13,11.59 L12.13,11.59 Z M11.56,5.67 C11.56,6.67 9.36,7.15 9.36,6.03 C9.36,5 11.56,4.54 11.56,5.67 L11.56,5.67 Z"></path> <circle fill="none" stroke="#000" stroke-width="1.1" cx="10" cy="10" r="9"></circle></svg>';
 
 // loads the Icon plugin
 UIkit.icon.add({ info: info });
-
 $(window).width() < 599
   ? $('.intro-sidebar').html('Datensätze anzeigen.')
   : $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.insektensommer.de" target=_blank>Insektensommers</a> zu erkunden.');
 
-$('#sidebar').css('left', '50px');
+var outerHeight = $('#details').outerHeight(!0);
+$('#details').css('bottom', 2 * -outerHeight);
+$('#details-close').click(function() {
+  $('#details').css('bottom', -outerHeight);
+});
+
+const tk25Template = require('../tmpl/details-tk25.html');
+const fundTemplate = require('../tmpl/details-fund.html');
+
+const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
 
 var map = new mapboxgl.Map({
   container: 'map', // container id
@@ -61,6 +64,8 @@ var map = new mapboxgl.Map({
   attributionControl: false
 });
 
+$('#sidebar').css('left', '50px');
+
 map.on('mousemove', function(ev) {
   map.queryRenderedFeatures(ev.point).length ? map.getCanvas().style.cursor = 'pointer' : map.getCanvas().style.cursor = ''
   // var features = map.queryRenderedFeatures(e.point);
@@ -83,12 +88,6 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
-var outerHeight = $('#details').outerHeight(!0);
-$('#details').css('bottom', 2 * -outerHeight);
-$('#details-close').click(function() {
-  $('#details').css('bottom', -outerHeight);
-});
-
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
     layers: ['meldungen', 'tk25']
@@ -97,18 +96,14 @@ map.on('click', function(ev) {
     let id = features[0].layer.id;
     let props = features[0].properties;
     if (id === 'tk25') {
-      $('.detail-fund').hide();
       $('#details').html(tk25Template(props));
-      $('.detail-tk25').show();
       var outerHeightTK25 = $('#details').outerHeight(!0);
       $('#details').css('bottom', 2 * outerHeightTK25);
       $('#details-close').click(function() {
         $('#details').css('bottom', -outerHeightTK25);
       });
+      $('#details').css('bottom', '60px');
     } else {
-      $('.detail-tk25').hide();
-      console.log(props);
-
       var url = 'https://de.wikipedia.org/w/api.php';
       $.ajax({
         dataType: 'json',
@@ -131,22 +126,24 @@ map.on('click', function(ev) {
         cache: true,
         success: function(data) {
           if (data.query) {
-            props.beschreibung = data.query.pages[0].extract.trim();
+            console.log(data.query);
+            if (data.query.pages[0].extract !== undefined) {
+              props.beschreibung = data.query.pages[0].extract.trim();
+            }
             if (data.query.pages[0].thumbnail !== undefined) {
               props.bild = data.query.pages[0].thumbnail.source;
             }
           }
           $('#details').html(fundTemplate(props));
+          var outerHeightFund = $('#details').outerHeight(!0);
+          $('#details').css('bottom', 2 * -outerHeightFund);
+          $('#details').css('bottom', '60px');
+          $('#details-close').click(function() {
+            $('#details').css('bottom', 2 * -outerHeightFund);
+          });
         }
       });
     }
-    $('.detail-totfund').show();
-    var outerHeightFund = $('#details').outerHeight(!0);
-    $('#details').css('bottom', 2 * -outerHeightFund);
-    $('#details-close').click(function() {
-      $('#details').css('bottom', -outerHeightFund);
-    });
-    $('#details').css('bottom', '90px');
   } else {
     let oh = $('#details').outerHeight(!0);
     $('#details').css('bottom', -oh);
