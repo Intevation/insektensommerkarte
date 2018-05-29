@@ -617,8 +617,7 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     overflow: auto;
     background: rgba(255, 255, 255, 0.8);
 }
-
-.circle1::after {
+.circleMeldungen::before{
     content: "";
     display: inline-block;
     width: 10px;
@@ -628,24 +627,54 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     background: #762a83;
 }
 
-.circle2::after {
+
+.circle::before{
     content: "";
     display: inline-block;
     width: 10px;
     height: 10px;
     border-radius: 20px;
     margin-left: 7px;
-    background: #e9a3c9;
 }
 
-.circle3::after {
-    content: "";
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 20px;
-    margin-left: 7px;
-    background: #3288bd;
+.meldungen::before{
+    background: #762a83;
+}
+
+.garten:before{
+    background: #e31a1c;
+}
+
+.balkon::before {
+    background: #fb9a99;
+}
+
+.park::before{
+    background: #fbdf6f;
+}
+
+.wiese::before{
+    background: #b2df8a;
+}
+
+.wald::before{
+    background: #33a02c;
+}
+
+.feld::before{
+    background: #ff7f00;
+}
+
+.bach::before{
+    background: #a6cee3;
+}
+
+.fluss::before{
+    background: #1f78b4;
+}
+
+.sonstiges::before{
+    background: #cab2d6;
 }
 
 .mapboxgl-ctrl-group .mapboxgl-ctrl-compass {

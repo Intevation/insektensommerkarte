@@ -28,7 +28,9 @@ $('#details-close').click(function() {
 const tk25Template = require('../tmpl/details-tk25.html');
 const fundTemplate = require('../tmpl/details-fund.html');
 
-const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
+// const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
+
+const insektenSommer = { modul: 'beobachtungenNABU', email1: 'NabuRESTInsektensommer@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, zeilen: 10, service: 1628986788 };
 
 var map = new mapboxgl.Map({
   container: 'map', // container id
@@ -90,7 +92,7 @@ map.addControl(new mapboxgl.ScaleControl({
 
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
-    layers: ['meldungen', 'tk25']
+    layers: ['meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'bach', 'fluss', 'sonstiges', 'tk25']
   });
   if (features.length) {
     let id = features[0].layer.id;
@@ -160,7 +162,7 @@ map.on('load', function() {
     dataType: 'json',
     url: 'https://naturgucker.de/mobil/?callback=?',
     method: 'GET',
-    data: nabu,
+    data: insektenSommer,
     success: function(data) {
       makeGeoJSON(data);
     }
@@ -168,7 +170,7 @@ map.on('load', function() {
 
   function makeGeoJSON(data) {
     var geojson = GeoJSON.parse(data.beobachtungen, { Point: ['lat', 'lng'] });
-    var trimmed = gp(geojson, 6);
+    var trimmed = gp(JSON.parse(JSON.stringify(geojson).replace(/"\s+|\s+"/g, '"')), 6);
 
     map.addSource('funde', {
       'type': 'geojson',
@@ -176,10 +178,148 @@ map.on('load', function() {
     });
 
     map.addLayer({
+      'id': 'garten',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Garten'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#e31a1c',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'balkon',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Balkon'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#fb9a99',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'park',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Park'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#fbdf6f',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'wiese',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Wiese'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#b2df8a',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'wald',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Wald'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#33a02c',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'feld',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Feld'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#ff7f00',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'bach',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Bach'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#a6cee3',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'fluss',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Fluss'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#1f78b4',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+    map.addLayer({
+      'id': 'sonstiges',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'filter': ['==', 'lebensraum', 'Sonstiges'],
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#cab2d6',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+
+    map.addLayer({
       'id': 'meldungen',
       'source': 'funde',
       'type': 'circle',
-      // 'filter': ['==', 'Todesursache', 'ursache-kollision'],
+      'layout': {
+        'visibility': 'visible'
+      },
       'paint': {
         'circle-radius': 6,
         'circle-color': '#762a83',
@@ -188,6 +328,17 @@ map.on('load', function() {
       }
     });
   }
+  $('input[name=lebensraum]').change(function() {
+    // Deal with actual checkbox
+    // $('.totfunde.layer-legend').not(this).removeClass('active');
+    var id = $(this).attr('id');
+    console.log(id);
+    if ($(this).is(':checked')) {
+      map.setLayoutProperty(id, 'visibility', 'visible');
+    } else {
+      map.setLayoutProperty(id, 'visibility', 'none');
+    }
+  });
 
   $('input[name=insektensommer]').change(function() {
     // Deal with actual checkbox
