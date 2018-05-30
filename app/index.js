@@ -131,7 +131,6 @@ map.on('click', function(ev) {
         cache: true,
         success: function(data) {
           if (data.query) {
-            console.log(data.query);
             if (data.query.pages[0].extract !== undefined) {
               props.beschreibung = data.query.pages[0].extract.trim();
             }
@@ -178,6 +177,21 @@ map.on('load', function() {
     });
 
     map.addLayer({
+      'id': 'meldungen',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'visible'
+      },
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#762a83',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+
+    map.addLayer({
       'id': 'garten',
       'source': 'funde',
       'type': 'circle',
@@ -191,7 +205,8 @@ map.on('load', function() {
         'circle-stroke-color': '#ffffff',
         'circle-stroke-width': 1
       }
-    });
+    }, 'meldungen');
+
     map.addLayer({
       'id': 'balkon',
       'source': 'funde',
@@ -312,44 +327,7 @@ map.on('load', function() {
         'circle-stroke-width': 1
       }
     });
-
-    map.addLayer({
-      'id': 'meldungen',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'visible'
-      },
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#762a83',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
   }
-  $('input[name=lebensraum]').change(function() {
-    // Deal with actual checkbox
-    // $('.totfunde.layer-legend').not(this).removeClass('active');
-    var id = $(this).attr('id');
-    console.log(id);
-    if ($(this).is(':checked')) {
-      map.setLayoutProperty(id, 'visibility', 'visible');
-    } else {
-      map.setLayoutProperty(id, 'visibility', 'none');
-    }
-  });
-
-  $('input[name=insektensommer]').change(function() {
-    // Deal with actual checkbox
-    // $('.totfunde.layer-legend').not(this).removeClass('active');
-    var id = $(this).attr('id');
-    if ($(this).is(':checked')) {
-      map.setLayoutProperty(id, 'visibility', 'visible');
-    } else {
-      map.setLayoutProperty(id, 'visibility', 'none');
-    }
-  });
 
   map.addSource('tk25_source', {
     type: 'geojson',
@@ -399,18 +377,6 @@ map.on('load', function() {
     }
   });
 
-  $('input[name=messtischblatt]').change(function() {
-    // Deal with actual checkbox
-    // var id = $(this).attr("id");
-    if ($(this).is(':checked')) {
-      map.setLayoutProperty('tk25', 'visibility', 'visible');
-      map.setLayoutProperty('tk251', 'visibility', 'visible');
-    } else {
-      map.setLayoutProperty('tk25', 'visibility', 'none');
-      map.setLayoutProperty('tk251', 'visibility', 'visible');
-    }
-  });
-
   map.addLayer({
     'id': 'satellite',
     'type': 'raster',
@@ -449,32 +415,61 @@ map.on('load', function() {
     'minzoom': 0,
     'maxzoom': 14
   }, 'tk25');
+});
 
-  $('input[name=baselayer]').change(function() {
-    // Uncheck other checkboxes
-    $('input[name=baselayer]').not(this).prop('checked', false);
-    // Deal with actual checkbox
-    var id = $(this).attr('id');
-    if ($(this).is(':checked')) {
-      map.setLayoutProperty(id, 'visibility', 'visible');
-      if (id === 'osm') {
-        map.setLayoutProperty('satellite', 'visibility', 'none');
-        map.setLayoutProperty('stamen', 'visibility', 'none');
-      } else if (id === 'satellite') {
-        map.setLayoutProperty('osm', 'visibility', 'none');
-        map.setLayoutProperty('stamen', 'visibility', 'none');
-      } else {
-        map.setLayoutProperty('osm', 'visibility', 'none');
-        map.setLayoutProperty('satellite', 'visibility', 'none');
-      }
+// $('.tk25.layer-legend').change(function() {
+//  $(this).next().toggleClass('active');
+//  $(this).next().slideToggle('slow')
+// });
+//
+$('input[name=messtischblatt]').change(function() {
+  // Deal with actual checkbox
+  // var id = $(this).attr("id");
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty('tk25', 'visibility', 'visible');
+    map.setLayoutProperty('tk251', 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty('tk25', 'visibility', 'none');
+    map.setLayoutProperty('tk251', 'visibility', 'visible');
+  }
+});
+
+$('input[name=baselayer]').change(function() {
+  // Uncheck other checkboxes
+  $('input[name=baselayer]').not(this).prop('checked', false);
+  // Deal with actual checkbox
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
+    if (id === 'osm') {
+      map.setLayoutProperty('satellite', 'visibility', 'none');
+      map.setLayoutProperty('stamen', 'visibility', 'none');
+    } else if (id === 'satellite') {
+      map.setLayoutProperty('osm', 'visibility', 'none');
+      map.setLayoutProperty('stamen', 'visibility', 'none');
     } else {
-      map.setLayoutProperty(id, 'visibility', 'none');
+      map.setLayoutProperty('osm', 'visibility', 'none');
+      map.setLayoutProperty('satellite', 'visibility', 'none');
     }
-  });
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
+});
 
-  // $('.tk25.layer-legend').change(function() {
-  //  $(this).next().toggleClass('active');
-  //  $(this).next().slideToggle('slow')
-  // });
-  //
+$('input[name=lebensraum]').change(function() {
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
+});
+
+$('input[name=insektensommer]').change(function() {
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
 });
