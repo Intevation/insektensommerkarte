@@ -66,8 +66,6 @@ var map = new mapboxgl.Map({
   attributionControl: false
 });
 
-$('#sidebar').css('left', '50px');
-
 map.on('mousemove', function(ev) {
   map.queryRenderedFeatures(ev.point).length ? map.getCanvas().style.cursor = 'pointer' : map.getCanvas().style.cursor = ''
   // var features = map.queryRenderedFeatures(e.point);
@@ -157,6 +155,7 @@ map.on('click', function(ev) {
 });
 
 map.on('load', function() {
+  $('#sidebar').css('left', '50px');
   $.ajax({
     dataType: 'json',
     url: 'https://naturgucker.de/mobil/?callback=?',
@@ -205,7 +204,7 @@ map.on('load', function() {
         'circle-stroke-color': '#ffffff',
         'circle-stroke-width': 1
       }
-    }, 'meldungen');
+    });
 
     map.addLayer({
       'id': 'balkon',
@@ -422,6 +421,28 @@ map.on('load', function() {
 //  $(this).next().slideToggle('slow')
 // });
 //
+
+$('input[name=insektensommer]').change(function() {
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
+});
+
+$('input[name=lebensraum]').change(function() {
+  // TODO: Fixed input handling.
+  // map.setLayoutProperty('meldungen', 'visibility', 'none');
+  // $('#meldungen').attr('checked', false);
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
+});
+
 $('input[name=messtischblatt]').change(function() {
   // Deal with actual checkbox
   // var id = $(this).attr("id");
@@ -451,24 +472,6 @@ $('input[name=baselayer]').change(function() {
       map.setLayoutProperty('osm', 'visibility', 'none');
       map.setLayoutProperty('satellite', 'visibility', 'none');
     }
-  } else {
-    map.setLayoutProperty(id, 'visibility', 'none');
-  }
-});
-
-$('input[name=lebensraum]').change(function() {
-  var id = $(this).attr('id');
-  if ($(this).is(':checked')) {
-    map.setLayoutProperty(id, 'visibility', 'visible');
-  } else {
-    map.setLayoutProperty(id, 'visibility', 'none');
-  }
-});
-
-$('input[name=insektensommer]').change(function() {
-  var id = $(this).attr('id');
-  if ($(this).is(':checked')) {
-    map.setLayoutProperty(id, 'visibility', 'visible');
   } else {
     map.setLayoutProperty(id, 'visibility', 'none');
   }
