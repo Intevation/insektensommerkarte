@@ -16,9 +16,12 @@ var info = '<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3
 
 // loads the Icon plugin
 UIkit.icon.add({ info: info });
-$(window).width() < 599
-  ? $('.intro-sidebar').hide()
-  : $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.insektensommer.de" target=_blank>Insektensommers</a> zu erkunden.');
+if ($(window).width() < 599) {
+  $('.intro-sidebar').hide();
+  $('#sidebar header').hide();
+} else {
+  $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.insektensommer.de" target=_blank>Insektensommers</a> zu erkunden.');
+}
 
 var outerHeight = $('#details').outerHeight(!0);
 $('#details').css('bottom', 2 * -outerHeight);
