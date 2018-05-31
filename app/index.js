@@ -6,6 +6,7 @@ import gp from 'geojson-precision';
 
 // https://css-tricks.com/css-modules-part-2-getting-started/
 // https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9#.txbwrns34
+import '../node_modules/normalize.css/normalize.css'
 import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import '../node_modules/uikit/dist/css/uikit.css';
 import '../css/index.css';

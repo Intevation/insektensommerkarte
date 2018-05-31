@@ -1,5 +1,3 @@
-@import "~normalize.css";
-
 *:before,
 *:after {
     box-sizing: border-box;
@@ -259,6 +257,21 @@ a:hover {
 #app-container #map {
     height: 100%;
     width: 100%;
+    font-size: 16px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #6A6A6A;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -font-smoothing: antialiased;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
 }
 
 @media (max-width: 681px) {
