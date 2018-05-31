@@ -4711,6 +4711,10 @@ mapbox-gl@^0.45.0:
     tinyqueue "^1.1.0"
     vt-pbf "^3.0.1"
 
+mapboxgl-spiderifier@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/mapboxgl-spiderifier/-/mapboxgl-spiderifier-1.0.9.tgz#332d3f53eff9b4a0ea9e062dc480ddaae581f244"
+
 markdown-escapes@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.2.tgz#e639cbde7b99c841c0bacc8a07982873b46d2122"

@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import UIkit from 'uikit';
 import GeoJSON from 'geojson';
 import gp from 'geojson-precision';
+import MapboxglSpiderifier from 'mapboxgl-spiderifier';
 
 // https://css-tricks.com/css-modules-part-2-getting-started/
 // https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9#.txbwrns34
@@ -12,6 +13,8 @@ import '../css/index.css';
 
 // from uikit-icons.js
 var info = '<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M12.13,11.59 C11.97,12.84 10.35,14.12 9.1,14.16 C6.17,14.2 9.89,9.46 8.74,8.37 C9.3,8.16 10.62,7.83 10.62,8.81 C10.62,9.63 10.12,10.55 9.88,11.32 C8.66,15.16 12.13,11.15 12.14,11.18 C12.16,11.21 12.16,11.35 12.13,11.59 C12.08,11.95 12.16,11.35 12.13,11.59 L12.13,11.59 Z M11.56,5.67 C11.56,6.67 9.36,7.15 9.36,6.03 C9.36,5 11.56,4.54 11.56,5.67 L11.56,5.67 Z"></path> <circle fill="none" stroke="#000" stroke-width="1.1" cx="10" cy="10" r="9"></circle></svg>';
+
+var spiderifier;
 
 // loads the Icon plugin
 UIkit.icon.add({ info: info });
@@ -28,6 +31,8 @@ $('#details-close').click(function() {
 const tk25Template = require('../tmpl/details-tk25.html');
 const fundTemplate = require('../tmpl/details-fund.html');
 
+mapboxgl.accessToken = 'pk.eyJ1IjoiYmpvZXJuc2NoaWxiZXJnIiwiYSI6InRzOVZKeWsifQ.y20mr9o3MolFOUdTQekhUA';
+
 // const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
 
 const insektenSommer = { modul: 'beobachtungenNABU', email1: 'NabuRESTInsektensommer@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, zeilen: 10, service: 1628986788 };
@@ -35,6 +40,7 @@ const insektenSommer = { modul: 'beobachtungenNABU', email1: 'NabuRESTInsektenso
 var map = new mapboxgl.Map({
   container: 'map', // container id
   style: {
+    sprite: 'mapbox://sprites/mapbox/bright-v8',
     glyphs: 'fonts/{fontstack}/{range}.pbf',
     version: 8,
     sources: {
@@ -92,6 +98,7 @@ map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
     layers: ['meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'bach', 'fluss', 'sonstiges', 'tk25']
   });
+  spiderifier.spiderfy(features[0].geometry.coordinates, features);
   if (features.length) {
     let id = features[0].layer.id;
     let props = features[0].properties;
@@ -155,6 +162,13 @@ map.on('click', function(ev) {
 });
 
 map.on('load', function() {
+  spiderifier = new MapboxglSpiderifier(map, {
+    onClick: function(e, spiderLeg) {
+      console.log('Clicked on ', spiderLeg);
+    },
+    markerWidth: 40,
+    markerHeight: 40
+  });
   $('#sidebar').css('left', '50px');
   $.ajax({
     dataType: 'json',
@@ -176,17 +190,14 @@ map.on('load', function() {
     });
 
     map.addLayer({
-      'id': 'meldungen',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'visible'
-      },
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#762a83',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
+      id: 'meldungen',
+      source: 'funde',
+      type: 'symbol',
+      layout: {
+        visibility: 'visible',
+        // https://github.com/mapbox/mapbox-gl-styles/tree/master/sprites/bright-v8/_svg
+        'icon-image': 'marker-11',
+        'icon-allow-overlap': false
       }
     });
 
