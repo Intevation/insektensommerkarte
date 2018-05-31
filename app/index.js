@@ -81,8 +81,11 @@ map.touchZoomRotate.disableRotation();
 // map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 // TODO: Fix color of svg symbol and position.
 // TODO: Fix of fade out of sidebar
-// map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
+map.addControl(new mapboxgl.FullscreenControl());
 map.addControl(new mapboxgl.NavigationControl());
+// Dirty hack for fullscreen control placement!
+$('.mapboxgl-ctrl-fullscreen').appendTo('.mapboxgl-ctrl-group');
+$('div.mapboxgl-ctrl-group:nth-child(1)').remove();
 map.addControl(new mapboxgl.ScaleControl({
   maxWidth: 200,
   unit: 'metric'
