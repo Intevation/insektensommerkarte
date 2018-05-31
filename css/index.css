@@ -282,7 +282,7 @@ a:hover {
 }
 
 #app-container #map .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-    margin: 56px 50px 0 0;
+    margin: 56px 10px 0 0;
     float: right;
 }
 
@@ -297,7 +297,7 @@ a:hover {
 }
 
 #app-container #map div.mapboxgl-ctrl-bottom-left {
-    left: 50px;
+    left: 10px;
 }
 
 @media (max-width: 681px) {
@@ -329,11 +329,11 @@ a:hover {
 }
 
 #app-container #sidebar {
-    height: 85%;
-    width: 350px;
+    height: 70%;
+    width: 300px;
     position: fixed;
     left: -400px;
-    bottom: 60px;
+    bottom: 200px;
     background-color: #fff;
     box-shadow: 0 20px 40px -20px #A3A3A3;
     border-radius: 4px;
@@ -696,4 +696,8 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     overflow-y: scroll;
     overflow-x: hidden;
     max-height: 200px;
+}
+
+#sidebar {
+    left: 10px !important;
 }
