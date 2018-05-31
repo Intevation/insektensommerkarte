@@ -511,15 +511,24 @@ a:hover {
     position: absolute;
     right: 60px;
     transition: .5s all;
-    height: auto;
+    max-height: 600px;
     width: 370px;
     z-index: 20;
 }
 
+#app-container #details section{
+
+    position: relative;
+    max-height:540px;
+    top:0;
+    bottom:0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
 @media (max-width: 681px) {
     #app-container aside#details {
-        overflow-y: scroll;
-        overflow-x: hidden;
         width: 100vw;
         right: 0;
         bottom: 0;
