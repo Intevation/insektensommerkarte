@@ -20,7 +20,7 @@ if ($(window).width() < 599) {
   $('.intro-sidebar').hide();
   $('#sidebar header').hide();
 } else {
-  $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.insektensommer.de" target=_blank>Insektensommers</a> zu erkunden.');
+  $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.nabu.de/tiere-und-pflanzen/aktionen-und-projekte/insektensommer/index.html" target=_blank>Insektensommers</a> zu erkunden.');
 }
 
 var outerHeight = $('#details').outerHeight(!0);
@@ -190,22 +190,32 @@ map.on('load', function() {
   });
 
   function makeGeoJSON(data) {
-    var geojson = GeoJSON.parse(data.beobachtungen, { Point: ['lat', 'lng'] });
+    var geojson = GeoJSON.parse(data.beobachtungen, {
+      Point: ['lat', 'lng']
+    });
     var trimmed = gp(JSON.parse(JSON.stringify(geojson).replace(/"\s+|\s+"/g, '"')), 6);
 
-    map.addSource('funde', {
-      'type': 'geojson',
-      'data': trimmed
+    var dummy = [];
+    trimmed.features.forEach(function(feat) {
+      dummy.push([
+        feat.geometry.coordinates[1],
+        feat.geometry.coordinates[0]
+      ]);
     });
 
+    var anzahlMeldungen = dummy.map(JSON.stringify).reverse().filter(function(e, i, a) { return a.indexOf(e, i + 1) === -1; }).reverse().map(JSON.parse);
+    $('span.meldungen').text(' Alle ' + anzahlMeldungen.length + ' Meldungen');
+
+    map.addSource('funde', { type: 'geojson', data: trimmed });
+
     map.addLayer({
-      'id': 'meldungen',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'visible'
+      id: 'meldungen',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'visible'
       },
-      'paint': {
+      paint: {
         'circle-radius': 6,
         'circle-color': '#762a83',
         'circle-stroke-color': '#ffffff',
@@ -214,13 +224,13 @@ map.on('load', function() {
     });
 
     map.addLayer({
-      'id': 'insekten',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'insekten',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'paint': {
+      paint: {
         'circle-radius': 6,
         'circle-color': '#000000',
         'circle-stroke-color': '#ffffff',
@@ -229,14 +239,14 @@ map.on('load', function() {
     });
 
     map.addLayer({
-      'id': 'garten',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'garten',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Garten'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Garten'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#e31a1c',
         'circle-stroke-color': '#ffffff',
@@ -245,14 +255,14 @@ map.on('load', function() {
     });
 
     map.addLayer({
-      'id': 'balkon',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'balkon',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Balkon'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Balkon'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#fb9a99',
         'circle-stroke-color': '#ffffff',
@@ -260,14 +270,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'park',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'park',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Park'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Park'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#fbdf6f',
         'circle-stroke-color': '#ffffff',
@@ -275,14 +285,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'wiese',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'wiese',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Wiese'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Wiese'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#b2df8a',
         'circle-stroke-color': '#ffffff',
@@ -290,14 +300,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'wald',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'wald',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Wald'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Wald'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#33a02c',
         'circle-stroke-color': '#ffffff',
@@ -305,14 +315,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'feld',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'feld',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Feld'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Feld'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#ff7f00',
         'circle-stroke-color': '#ffffff',
@@ -320,14 +330,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'bach',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'bach',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Bach'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Bach'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#a6cee3',
         'circle-stroke-color': '#ffffff',
@@ -335,14 +345,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'fluss',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'fluss',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Fluss'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Fluss'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#1f78b4',
         'circle-stroke-color': '#ffffff',
@@ -350,14 +360,14 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      'id': 'sonstiges',
-      'source': 'funde',
-      'type': 'circle',
-      'layout': {
-        'visibility': 'none'
+      id: 'sonstiges',
+      source: 'funde',
+      type: 'circle',
+      layout: {
+        visibility: 'none'
       },
-      'filter': ['==', 'lebensraum', 'Sonstiges'],
-      'paint': {
+      filter: ['==', 'lebensraum', 'Sonstiges'],
+      paint: {
         'circle-radius': 6,
         'circle-color': '#cab2d6',
         'circle-stroke-color': '#ffffff',
