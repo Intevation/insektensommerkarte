@@ -105,7 +105,7 @@ map.addControl(new mapboxgl.ScaleControl({
 
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
-    layers: ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'bach', 'fluss', 'sonstiges', 'tk25']
+    layers: ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
   });
   if (features.length) {
     let id = features[0].layer.id;
