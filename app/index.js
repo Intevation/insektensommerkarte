@@ -35,7 +35,14 @@ const meldungTemplate = require('../tmpl/details-meldung.html');
 
 // const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
 
-const insektenSommer = { modul: 'beobachtungenNABU', email1: 'NabuRESTInsektensommer@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, zeilen: 10, service: 1628986788 };
+const insektenSommer = {
+  modul: 'beobachtungenNABU',
+  email1: 'NabuRESTInsektensommer@naturgucker.de',
+  md5: '202cb962ac59075b964b07152d234b70',
+  offset: 0,
+  zeilen: 0,
+  service: 1628986788
+};
 
 var map = new mapboxgl.Map({
   container: 'map', // container id
