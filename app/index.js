@@ -346,13 +346,13 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      id: 'bach',
+      id: 'teich',
       source: 'funde',
       type: 'circle',
       layout: {
         visibility: 'none'
       },
-      filter: ['==', 'lebensraum', 'Bach'],
+      filter: ['==', 'lebensraum', 'Teich'],
       paint: {
         'circle-radius': 6,
         'circle-color': '#a6cee3',
@@ -361,13 +361,13 @@ map.on('load', function() {
       }
     });
     map.addLayer({
-      id: 'fluss',
+      id: 'bachfluss',
       source: 'funde',
       type: 'circle',
       layout: {
         visibility: 'none'
       },
-      filter: ['==', 'lebensraum', 'Fluss'],
+      filter: ['==', 'lebensraum', 'Bach/Fluss'],
       paint: {
         'circle-radius': 6,
         'circle-color': '#1f78b4',
