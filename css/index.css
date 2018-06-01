@@ -754,3 +754,11 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
 section#meldung {
     padding: 10px;
 }
+
+.uk-hidden-hover>a {
+    color: #0f6ecd;
+}
+
+.uk-transition-slide-bottom>a:hover{
+    color: #0f6ecd;
+}
