@@ -150,6 +150,7 @@ map.on('click', function(ev) {
       $.ajax({
         dataType: 'json',
         url: url,
+        async: false,
         method: 'GET',
         headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
         // https://de.wikipedia.org/w/api.php
@@ -157,7 +158,7 @@ map.on('click', function(ev) {
           action: 'query',
           format: 'json',
           formatversion: 2,
-          prop: 'extracts|pageimages|info|redirects',
+          prop: 'extracts|pageimages|info|redirects|imageinfo',
           pithumbsize: 300,
           exintro: true,
           inprop: 'url',
@@ -167,23 +168,50 @@ map.on('click', function(ev) {
         },
         cache: true,
         success: function(data) {
+          console.log(data);
           if (data.query) {
             if (data.query.pages[0].extract !== undefined) {
               props.beschreibung = data.query.pages[0].extract.trim();
             }
             if (data.query.pages[0].thumbnail !== undefined) {
               props.bild = data.query.pages[0].thumbnail.source;
+              props.bilddatei = data.query.pages[0].pageimage;
+
+              // https://commons.wikimedia.org/w/api.php?&action=query&prop=imageinfo&titles=File:Vespa_crabro_80708.jpg&format=json&iiprop=user|extmetadata
+              $.ajax({
+                dataType: 'json',
+                url: url,
+                async: false,
+                method: 'GET',
+                headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
+                // https://de.wikipedia.org/w/api.php
+                data: {
+                  action: 'query',
+                  format: 'json',
+                  prop: 'imageinfo',
+                  titles: 'File:' + data.query.pages[0].pageimage,
+                  iiprop: 'user|extmetadata',
+                  origin: '*'
+                },
+                cache: true,
+                success: function(data) {
+                  props.bilduser = data.query.pages['-1'].imageinfo[0].user;
+                  props.bildname = data.query.pages['-1'].imageinfo[0].extmetadata.ObjectName.value;
+                  props.bildlizenz = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseShortName.value;
+                  props.bildlizenzurl = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseUrl.value;
+                }
+              });
             }
-          }
-          $('#details').html(fundTemplate(props));
-          var outerHeightFund = $('#details').outerHeight(!0);
-          $('#details').css('bottom', 2 * -outerHeightFund);
-          $(window).width() < 599
-            ? $('#details').css('bottom', '0px')
-            : $('#details').css('bottom', '60px');
-          $('#details-close').click(function() {
+            $('#details').html(fundTemplate(props));
+            var outerHeightFund = $('#details').outerHeight(!0);
             $('#details').css('bottom', 2 * -outerHeightFund);
-          });
+            $(window).width() < 599
+              ? $('#details').css('bottom', '0px')
+              : $('#details').css('bottom', '60px');
+            $('#details-close').click(function() {
+              $('#details').css('bottom', 2 * -outerHeightFund);
+            });
+          }
         }
       });
     }
