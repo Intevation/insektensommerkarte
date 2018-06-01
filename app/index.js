@@ -115,7 +115,16 @@ map.on('click', function(ev) {
         ? $('#details').css('bottom', '0px')
         : $('#details').css('bottom', '60px');
     } else if (id === 'meldungen') {
-      var data = { meldung: [] };
+      var data = {
+        anzahl: features.length,
+        ppl: function() {
+          return (this.anzahl === 1) ? 'Beobachtung' : 'Beobachtungen'
+        },
+        belongs: function() {
+          return (this.anzahl === 1) ? 'gehört' : 'gehören'
+        },
+        meldung: []
+      };
       for (const insect of features) {
         data.meldung.push({ 'artname': insect.properties.artname, 'anzahl': insect.properties.anzahl, 'lebensraum': insect.properties.lebensraum });
       }
@@ -204,7 +213,7 @@ map.on('load', function() {
     });
 
     var anzahlMeldungen = dummy.map(JSON.stringify).reverse().filter(function(e, i, a) { return a.indexOf(e, i + 1) === -1; }).reverse().map(JSON.parse);
-    $('span.meldungen').text(' Alle ' + anzahlMeldungen.length + ' Meldungen');
+    $('span.meldungen').text(' Alle Meldungen (' + anzahlMeldungen.length + ')');
 
     map.addSource('funde', { type: 'geojson', data: trimmed });
 
