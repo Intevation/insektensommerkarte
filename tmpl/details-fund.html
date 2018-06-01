@@ -1,5 +1,5 @@
 <header>
-    <span>Details Funde</span>
+    <span>Details Fund</span>
     <a id="details-close" href="#" uk-close></a>
 </header>
 <section>
@@ -33,6 +33,12 @@
         <td>{{fundort}}</td>
     </tr>
     {{/fundort}}
+    {{#lebensraum}}
+    <tr id="detail-fund-lebensraum" class="detail-lebesraum">
+        <td>Lebensraum:</td>
+        <td>{{lebensraum}}</td>
+    </tr>
+    {{/lebensraum}}
     {{#bundesland}}
     <tr id="detail-fund-bundesland" class="detail-fund">
         <td>Bundesland:</td>

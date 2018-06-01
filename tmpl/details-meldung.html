@@ -1,0 +1,13 @@
+<header>
+    <span>Details Meldung</span>
+    <a id="details-close" href="#" uk-close></a>
+</header>
+<section id="meldung">
+
+    Es wurden gezählt:
+    <ul>
+        {{#meldung}}
+            <li>{{anzahl}} {{artname}} im Lebensraum {{lebensraum}}.</li>
+        {{/meldung}}
+    </ul>
+</section>

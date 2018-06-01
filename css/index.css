@@ -516,16 +516,14 @@ a:hover {
     z-index: 20;
 }
 
-#app-container #details section{
-
+#app-container #details section {
     position: relative;
-    max-height:540px;
-    top:0;
-    bottom:0;
+    max-height: 540px;
+    top: 0;
+    bottom: 0;
     overflow-y: auto;
     overflow-x: hidden;
 }
-
 
 @media (max-width: 681px) {
     #app-container aside#details {
@@ -688,6 +686,10 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     background: #762a83;
 }
 
+.insekten::before {
+    background: #000000;
+}
+
 .garten:before {
     background: #e31a1c;
 }
@@ -747,4 +749,8 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
 #sidebar {
     left: 10px !important;
     z-index: 1;
+}
+
+section#meldung {
+    padding: 10px;
 }

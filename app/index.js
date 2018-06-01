@@ -31,6 +31,7 @@ $('#details-close').click(function() {
 
 const tk25Template = require('../tmpl/details-tk25.html');
 const fundTemplate = require('../tmpl/details-fund.html');
+const meldungTemplate = require('../tmpl/details-meldung.html');
 
 // const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
 
@@ -97,7 +98,7 @@ map.addControl(new mapboxgl.ScaleControl({
 
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
-    layers: ['meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'bach', 'fluss', 'sonstiges', 'tk25']
+    layers: ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'bach', 'fluss', 'sonstiges', 'tk25']
   });
   if (features.length) {
     let id = features[0].layer.id;
@@ -108,6 +109,21 @@ map.on('click', function(ev) {
       $('#details').css('bottom', 2 * outerHeightTK25);
       $('#details-close').click(function() {
         $('#details').css('bottom', -outerHeightTK25);
+      });
+      $('#details').css('bottom', '60px');
+      $(window).width() < 599
+        ? $('#details').css('bottom', '0px')
+        : $('#details').css('bottom', '60px');
+    } else if (id === 'meldungen') {
+      var data = { meldung: [] };
+      for (const insect of features) {
+        data.meldung.push({ 'artname': insect.properties.artname, 'anzahl': insect.properties.anzahl, 'lebensraum': insect.properties.lebensraum });
+      }
+      $('#details').html(meldungTemplate(data));
+      var outerHeightMeldung = $('#details').outerHeight(!0);
+      $('#details').css('bottom', 2 * outerHeightMeldung);
+      $('#details-close').click(function() {
+        $('#details').css('bottom', -outerHeightMeldung);
       });
       $('#details').css('bottom', '60px');
       $(window).width() < 599
@@ -192,6 +208,21 @@ map.on('load', function() {
       'paint': {
         'circle-radius': 6,
         'circle-color': '#762a83',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1
+      }
+    });
+
+    map.addLayer({
+      'id': 'insekten',
+      'source': 'funde',
+      'type': 'circle',
+      'layout': {
+        'visibility': 'none'
+      },
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#000000',
         'circle-stroke-color': '#ffffff',
         'circle-stroke-width': 1
       }
