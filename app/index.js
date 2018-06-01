@@ -168,8 +168,8 @@ map.on('click', function(ev) {
         },
         cache: true,
         success: function(data) {
-          console.log(data);
           if (data.query) {
+            props.wikititle = data.query.pages[0].title;
             if (data.query.pages[0].extract !== undefined) {
               props.beschreibung = data.query.pages[0].extract.trim();
             }

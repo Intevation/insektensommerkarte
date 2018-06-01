@@ -12,6 +12,7 @@
     <div class="uk-inline-clip uk-transition-toggle" tabindex="0">
         <img class="lazy" data-src="{{bild}}" data-width="300" data-uk-img alt=""
             src="{{bild}}">
+            <!--https://lizenzhinweisgenerator.de/-->
         <div class="uk-transition-slide-bottom uk-position-bottom uk-overlay uk-overlay-primary">
             <a href="https://commons.wikimedia.org/wiki/User:{{bilduser}}" target="_blank">{{bilduser}}</a>,
             <a href="https://commons.wikimedia.org/wiki/File:{{bilddatei}}" target="_blank">{{bildname}}</a>,
@@ -23,7 +24,23 @@
 {{/bild}}
 </div>
 {{#beschreibung}}
-<div id="detail-fund-beschreibung">{{&beschreibung}}</div>
+<!--https://de.wikipedia.org/wiki/Wikipedia:Weiternutzung-->
+<div class="uk-visible-toggle" id="detail-fund-beschreibung">{{&beschreibung}}
+    <div class="uk-hidden-hover uk-text-meta">
+        <hr class="uk-divider-icon">
+        Dieser Text basiert auf dem Artikel
+        <a target="_blank" href="https://de.wikipedia.org/wiki/{{wikititle}}">{{wikititle}}</a>
+        aus der freien Enzyklopädie
+        <a target="_blank" href="https://de.wikipedia.org">Wikipedia</a>
+        und steht unter der Lizenz
+        <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/de/"> Creative Commons CC-BY-SA 3.0 Unported</a> (
+        <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/de/legalcode">Kurzfassung</a>).
+        <br> In der Wikipedia ist eine
+        <a target="_blank" href="https://de.wikipedia.org/w/index.php?title={{wikititle}}&action=history">Liste der Autoren</a> verfügbar.
+    </div>
+
+</div>
+
 {{/beschreibung}}
 <table>
     {{#anzahl}}
