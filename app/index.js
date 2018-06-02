@@ -244,15 +244,21 @@ map.on('load', function() {
       top100.sort(function(a, b) {
         return b.anzahl - a.anzahl;
       });
+      let i = 0;
       for (let n of top100) {
         // die Sequence bei 100 abbrechen
-        $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
+        if (i < 100) {
+          $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
             <div class="title">' + n.artname + '</div>\
             <div class="switch">\
               <input type="checkbox" name="top100" id="' + n.artname + '" class="ios-toggle" unchecked />\
               <label for="' + n.artname + '" class="checkbox-label" data-off="aus" data-on="an" />\
             </div>\
           </div>');
+          i++;
+        } else {
+          break;
+        }
       }
       makeGeoJSON(data);
     }
