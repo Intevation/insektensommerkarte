@@ -20,7 +20,7 @@ if ($(window).width() < 599) {
   $('.intro-sidebar').hide();
   $('#sidebar header').hide();
 } else {
-  $('.intro-sidebar').html('Hier können Sie sich verschiedene Datensätze anzeigen lassen, um interaktiv die Daten des <a href="https://www.nabu.de/tiere-und-pflanzen/aktionen-und-projekte/insektensommer/index.html" target=_blank>Insektensommers</a> zu erkunden.');
+  $('.intro-sidebar').html('Hier können Sie sich verschiedene Meldungen und Beobachtungen anzeigen lassen, um interaktiv die Daten des <a href="https://www.nabu.de/tiere-und-pflanzen/aktionen-und-projekte/insektensommer/index.html" target=_blank>Insektensommers</a> zu erkunden.');
 }
 
 var outerHeight = $('#details').outerHeight(!0);
