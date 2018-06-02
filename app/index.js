@@ -250,8 +250,8 @@ map.on('load', function() {
         // die Sequence bei 100 abbrechen
         if (i < 100) {
           $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
-          <style>.circle#' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '::before{background: ' + randomColor() + ';}</style> \
-            <div class="title"><span class="circle" id="' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '"> ' + n.artname + '</span></div>\
+          <style>.circle.' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '::before{background: ' + randomColor() + ';}</style> \
+            <div class="title"><span class="circle ' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '"> ' + n.artname + '</span></div>\
             <div class="switch">\
               <input type="checkbox" name="top100" id="' + n.artname + '" class="ios-toggle" unchecked />\
               <label for="' + n.artname + '" class="checkbox-label" data-off="aus" data-on="an" />\
@@ -287,8 +287,8 @@ map.on('load', function() {
 
     $('input[name=top100]').change(function() {
       var id = $(this).attr('id');
-      console.log($('span.circle#' + id));
-      console.log($('span.circle#' + id + '::before').css('background'));
+      var elem1 = document.getElementsByClassName('circle ' + id.replace(/\s/g, '').replace(/\(unbestimmt\)/g, ''));
+      var style = window.getComputedStyle(elem1[0], ':before').getPropertyValue('background-color');
       if (map.getLayer(id) === undefined) {
         map.addLayer({
           id: id,
@@ -300,7 +300,7 @@ map.on('load', function() {
           filter: ['==', 'artname', id],
           paint: {
             'circle-radius': 6,
-            'circle-color': '#e31a1c',
+            'circle-color': style,
             'circle-stroke-color': '#ffffff',
             'circle-stroke-width': 1
           }
