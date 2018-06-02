@@ -103,9 +103,11 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
+let layers = ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
-    layers: ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+    layers: layers
   });
   if (features.length) {
     let id = features[0].layer.id;
@@ -229,6 +231,29 @@ map.on('load', function() {
     method: 'GET',
     data: insektenSommer,
     success: function(data) {
+      const map = new Map();
+      data.beobachtungen.forEach(item => {
+        const entry = map.get(item.artname);
+        if (!entry) {
+          map.set(item.artname, { artname: item.artname, anzahl: 1 });
+        } else {
+          ++entry.anzahl;
+        }
+      });
+      const top100 = [...map.values()];
+      top100.sort(function(a, b) {
+        return b.anzahl - a.anzahl;
+      });
+      for (let n of top100) {
+        // die Sequence bei 100 abbrechen
+        $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
+            <div class="title">' + n.artname + '</div>\
+            <div class="switch">\
+              <input type="checkbox" name="top100" id="' + n.artname + '" class="ios-toggle" unchecked />\
+              <label for="' + n.artname + '" class="checkbox-label" data-off="aus" data-on="an" />\
+            </div>\
+          </div>');
+      }
       makeGeoJSON(data);
     }
   });
@@ -251,6 +276,34 @@ map.on('load', function() {
     $('span.meldungen').text(' Alle Meldungen (' + anzahlMeldungen.length + ')');
 
     map.addSource('funde', { type: 'geojson', data: trimmed });
+
+    $('input[name=top100]').change(function() {
+      var id = $(this).attr('id');
+      if (map.getLayer(id) === undefined) {
+        map.addLayer({
+          id: id,
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'artname', id],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#e31a1c',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        layers.push(id);
+      }
+
+      if ($(this).is(':checked')) {
+        map.setLayoutProperty(id, 'visibility', 'visible');
+      } else {
+        map.setLayoutProperty(id, 'visibility', 'none');
+      }
+    });
 
     map.addLayer({
       id: 'meldungen',
