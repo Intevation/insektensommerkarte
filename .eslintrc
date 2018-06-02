@@ -24,6 +24,7 @@
   },
   "rules": {
     "no-new": 0,
+    "no-multi-str":0,
     "semi": 0,
     "no-spaced-func": 1,
     "space-before-function-paren": [
