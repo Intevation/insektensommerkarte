@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import UIkit from 'uikit';
 import GeoJSON from 'geojson';
 import gp from 'geojson-precision';
+import randomColor from 'randomcolor';
 
 // https://css-tricks.com/css-modules-part-2-getting-started/
 // https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9#.txbwrns34
@@ -249,7 +250,8 @@ map.on('load', function() {
         // die Sequence bei 100 abbrechen
         if (i < 100) {
           $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
-            <div class="title">' + n.artname + '</div>\
+          <style>.circle#' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '::before{background: ' + randomColor() + ';}</style> \
+            <div class="title"><span class="circle" id="' + n.artname.replace(/\s/g, '').replace(/\(unbestimmt\)/g, '') + '"> ' + n.artname + '</span></div>\
             <div class="switch">\
               <input type="checkbox" name="top100" id="' + n.artname + '" class="ios-toggle" unchecked />\
               <label for="' + n.artname + '" class="checkbox-label" data-off="aus" data-on="an" />\
@@ -285,6 +287,8 @@ map.on('load', function() {
 
     $('input[name=top100]').change(function() {
       var id = $(this).attr('id');
+      console.log($('span.circle#' + id));
+      console.log($('span.circle#' + id + '::before').css('background'));
       if (map.getLayer(id) === undefined) {
         map.addLayer({
           id: id,
