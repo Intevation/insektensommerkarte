@@ -107,7 +107,7 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
-let layers = ['meldungen', 'insekten', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+let layers = ['meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
 
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
@@ -329,21 +329,6 @@ map.on('load', function() {
       paint: {
         'circle-radius': 6,
         'circle-color': '#762a83',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-
-    map.addLayer({
-      id: 'insekten',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#000000',
         'circle-stroke-color': '#ffffff',
         'circle-stroke-width': 1
       }
