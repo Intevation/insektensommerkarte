@@ -463,6 +463,10 @@ a:hover {
     z-index: 5;
 }
 
+div#top.uk-accordion-content div.layer div.title {
+    padding: 15px 22px 15px 5px !important;
+}
+
 #app-container #map #sidebar div.sidebar-body div.layer div.switch {
     flex: 1;
     padding: 2%;
