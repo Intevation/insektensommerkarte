@@ -663,16 +663,6 @@ div#modal-full div.uk-modal-dialog div.uk-padding-large div.org {
     background: rgba(255, 255, 255, 0.8);
 }
 
-.circleMeldungen::before {
-    content: "";
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 20px;
-    margin-left: 7px;
-    background: #762a83;
-}
-
 .circle::before {
     content: "";
     display: inline-block;
@@ -755,6 +745,6 @@ section#meldung {
     color: #0f6ecd;
 }
 
-.uk-transition-slide-bottom>a:hover{
+.uk-transition-slide-bottom>a:hover {
     color: #0f6ecd;
 }
