@@ -4,6 +4,7 @@ import UIkit from 'uikit';
 import GeoJSON from 'geojson';
 import gp from 'geojson-precision';
 import randomColor from 'randomcolor';
+import * as topojson from 'topojson-client';
 
 // https://css-tricks.com/css-modules-part-2-getting-started/
 // https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9#.txbwrns34
@@ -472,6 +473,35 @@ map.on('load', function() {
     });
   }
 
+  $.ajax({
+    dataType: 'json',
+    url: 'data/vg2500_lan-p4.json',
+    method: 'GET',
+    success: function(data) {
+      console.log(data);
+      var features = topojson.feature(data, data.objects['vg2500_lan-p4']);
+
+      map.addSource('bundeslaender_source', {
+        type: 'geojson',
+        data: features
+      });
+
+      map.addLayer({
+        id: 'bundeslaender',
+        source: 'bundeslaender_source',
+        type: 'fill',
+        layout: {
+          visibility: 'none'
+        },
+        paint: {
+          'fill-outline-color': '#037AFF',
+          'fill-color': '#ffffff',
+          'fill-opacity': 0.25
+        }
+      });
+    }
+  });
+
   map.addSource('tk25_source', {
     type: 'geojson',
     data: 'data/tk25.geojson'
@@ -587,9 +617,15 @@ $('input[name=lebensraum]').change(function() {
   }
 });
 
+$('input[name=bundeslaender]').change(function() {
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty('bundeslaender', 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty('bundeslaender', 'visibility', 'none');
+  }
+});
+
 $('input[name=messtischblatt]').change(function() {
-  // Deal with actual checkbox
-  // var id = $(this).attr("id");
   if ($(this).is(':checked')) {
     map.setLayoutProperty('tk25', 'visibility', 'visible');
     map.setLayoutProperty('tk251', 'visibility', 'visible');
