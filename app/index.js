@@ -38,17 +38,6 @@ const tk25Template = require('../tmpl/details-tk25.html');
 const fundTemplate = require('../tmpl/details-fund.html');
 const meldungTemplate = require('../tmpl/details-meldung.html');
 
-// const nabu = { modul: 'beobachtungenNABU', email1: 'NabuREST@naturgucker.de', md5: '202cb962ac59075b964b07152d234b70', offset: 0, service: -1582992474 };
-
-const insektenSommer = {
-  modul: 'beobachtungenNABU',
-  email1: 'NabuRESTInsektensommer@naturgucker.de',
-  md5: '202cb962ac59075b964b07152d234b70',
-  offset: 0,
-  zeilen: 0,
-  service: 1628986788
-};
-
 var map = new mapboxgl.Map({
   container: 'map', // container id
   style: {
@@ -232,12 +221,11 @@ map.on('load', function() {
   $('#sidebar').css('left', '50px');
   $.ajax({
     dataType: 'json',
-    url: 'https://naturgucker.de/mobil/?callback=?',
+    url: 'data/data.json',
     method: 'GET',
-    data: insektenSommer,
     success: function(data) {
       const map = new Map();
-      data.beobachtungen.forEach(item => {
+      data.forEach(item => {
         const entry = map.get(item.artname);
         if (!entry) {
           map.set(item.artname, { artname: item.artname, anzahl: 1 });
@@ -272,7 +260,7 @@ map.on('load', function() {
   });
 
   function makeGeoJSON(data) {
-    var geojson = GeoJSON.parse(data.beobachtungen, {
+    var geojson = GeoJSON.parse(data, {
       Point: ['lat', 'lng']
     });
     var trimmed = gp(JSON.parse(JSON.stringify(geojson).replace(/"\s+|\s+"/g, '"')), 6);
@@ -478,7 +466,6 @@ map.on('load', function() {
     url: 'data/vg2500_lan-p4.json',
     method: 'GET',
     success: function(data) {
-      console.log(data);
       var features = topojson.feature(data, data.objects['vg2500_lan-p4']);
 
       map.addSource('bundeslaender_source', {
