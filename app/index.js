@@ -266,6 +266,35 @@ function top100(data) {
       break;
     }
   }
+  $('input[name=top100]').change(function() {
+    var id = $(this).attr('id');
+    var elem1 = document.getElementsByClassName('circle ' + id.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, ''));
+    var style = window.getComputedStyle(elem1[0], ':before').getPropertyValue('background-color');
+    if (map.getLayer(id) === undefined) {
+      map.addLayer({
+        id: id,
+        source: 'funde',
+        type: 'circle',
+        layout: {
+          visibility: 'none'
+        },
+        filter: ['==', 'artname', id],
+        paint: {
+          'circle-radius': 6,
+          'circle-color': style,
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 1
+        }
+      });
+      layers.push(id);
+    }
+
+    if ($(this).is(':checked')) {
+      map.setLayoutProperty(id, 'visibility', 'visible');
+    } else {
+      map.setLayoutProperty(id, 'visibility', 'none');
+    }
+  });
 }
 function setAnzahlMeldungen(data) {
   var dummy = [];
@@ -495,46 +524,6 @@ map.on('load', function() {
             'circle-stroke-width': 1
           }
         });
-        $('input[name=top100]').change(function() {
-          var id = $(this).attr('id');
-          var elem1 = document.getElementsByClassName('circle ' + id.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, ''));
-          var style = window.getComputedStyle(elem1[0], ':before').getPropertyValue('background-color');
-          if (map.getLayer(id) === undefined) {
-            map.addLayer({
-              id: id,
-              source: 'funde',
-              type: 'circle',
-              layout: {
-                visibility: 'none'
-              },
-              filter: ['==', 'artname', id],
-              paint: {
-                'circle-radius': 6,
-                'circle-color': style,
-                'circle-stroke-color': '#ffffff',
-                'circle-stroke-width': 1
-              }
-            });
-            layers.push(id);
-          }
-
-          if ($(this).is(':checked')) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-          } else {
-            map.setLayoutProperty(id, 'visibility', 'none');
-          }
-        });
-        $('input[name=lebensraum]').change(function() {
-          // TODO: Fixed input handling.
-          // map.setLayoutProperty('meldungen', 'visibility', 'none');
-          // $('#meldungen').attr('checked', false);
-          var id = $(this).attr('id');
-          if ($(this).is(':checked')) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-          } else {
-            map.setLayoutProperty(id, 'visibility', 'none');
-          }
-        });
       }
     );
   }
@@ -655,12 +644,6 @@ map.on('load', function() {
   }, 'tk25');
 });
 
-// $('.tk25.layer-legend').change(function() {
-//  $(this).next().toggleClass('active');
-//  $(this).next().slideToggle('slow')
-// });
-//
-
 $('input[name=insektensommer]').change(function() {
   var id = $(this).attr('id');
   if ($(this).is(':checked')) {
@@ -705,6 +688,18 @@ $('input[name=baselayer]').change(function() {
       map.setLayoutProperty('osm', 'visibility', 'none');
       map.setLayoutProperty('satellite', 'visibility', 'none');
     }
+  } else {
+    map.setLayoutProperty(id, 'visibility', 'none');
+  }
+});
+
+$('input[name=lebensraum]').change(function() {
+  // TODO: Fixed input handling.
+  // map.setLayoutProperty('meldungen', 'visibility', 'none');
+  // $('#meldungen').attr('checked', false);
+  var id = $(this).attr('id');
+  if ($(this).is(':checked')) {
+    map.setLayoutProperty(id, 'visibility', 'visible');
   } else {
     map.setLayoutProperty(id, 'visibility', 'none');
   }
