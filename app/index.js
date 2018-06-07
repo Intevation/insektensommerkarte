@@ -36,6 +36,7 @@ $('#details-close').click(function() {
 const tk25Template = require('../tmpl/details-tk25.html');
 const fundTemplate = require('../tmpl/details-fund.html');
 const meldungTemplate = require('../tmpl/details-meldung.html');
+const bundeslandTemplate = require('../tmpl/details-bundesland.html');
 
 var map = new mapboxgl.Map({
   container: 'map', // container id
@@ -96,7 +97,82 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
-let layers = ['meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+let layers = ['bundeslaender', 'meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+
+function showPopup(template, props) {
+  $('#details').html(template(props));
+  var outerHeight = $('#details').outerHeight(!0);
+  $('#details').css('bottom', 2 * outerHeight);
+  $('#details-close').click(function() {
+    $('#details').css('bottom', -outerHeight);
+  });
+  $('#details').css('bottom', '60px');
+  $(window).width() < 599
+    ? $('#details').css('bottom', '0px')
+    : $('#details').css('bottom', '60px');
+}
+function getWikiInfos(props) {
+  var url = 'https://de.wikipedia.org/w/api.php';
+  $.ajax({
+    dataType: 'json',
+    url: url,
+    async: false,
+    method: 'GET',
+    headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
+    // https://de.wikipedia.org/w/api.php
+    data: {
+      action: 'query',
+      format: 'json',
+      formatversion: 2,
+      prop: 'extracts|pageimages|info|redirects|imageinfo',
+      pithumbsize: 300,
+      exintro: true,
+      inprop: 'url',
+      redirects: true,
+      origin: '*',
+      titles: props.gattung + ' ' + props.taxon
+    },
+    cache: true,
+    success: function(data) {
+      if (data.query) {
+        props.wikititle = data.query.pages[0].title;
+        if (data.query.pages[0].extract !== undefined) {
+          props.beschreibung = data.query.pages[0].extract.trim();
+        }
+        if (data.query.pages[0].thumbnail !== undefined) {
+          props.bild = data.query.pages[0].thumbnail.source;
+          props.bilddatei = data.query.pages[0].pageimage;
+
+          // https://commons.wikimedia.org/w/api.php?&action=query&prop=imageinfo&titles=File:Vespa_crabro_80708.jpg&format=json&iiprop=user|extmetadata
+          $.ajax({
+            dataType: 'json',
+            url: url,
+            async: false,
+            method: 'GET',
+            headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
+            // https://de.wikipedia.org/w/api.php
+            data: {
+              action: 'query',
+              format: 'json',
+              prop: 'imageinfo',
+              titles: 'File:' + data.query.pages[0].pageimage,
+              iiprop: 'user|extmetadata',
+              origin: '*'
+            },
+            cache: true,
+            success: function(data) {
+              props.bilduser = data.query.pages['-1'].imageinfo[0].user;
+              props.bildname = data.query.pages['-1'].imageinfo[0].extmetadata.ObjectName.value;
+              props.bildlizenz = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseShortName.value;
+              props.bildlizenzurl = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseUrl.value;
+            }
+          });
+        }
+      }
+    }
+  });
+  return props;
+}
 
 map.on('click', function(ev) {
   var features = map.queryRenderedFeatures(ev.point, {
@@ -106,16 +182,7 @@ map.on('click', function(ev) {
     let id = features[0].layer.id;
     let props = features[0].properties;
     if (id === 'tk25') {
-      $('#details').html(tk25Template(props));
-      var outerHeightTK25 = $('#details').outerHeight(!0);
-      $('#details').css('bottom', 2 * outerHeightTK25);
-      $('#details-close').click(function() {
-        $('#details').css('bottom', -outerHeightTK25);
-      });
-      $('#details').css('bottom', '60px');
-      $(window).width() < 599
-        ? $('#details').css('bottom', '0px')
-        : $('#details').css('bottom', '60px');
+      showPopup(tk25Template, props);
     } else if (id === 'meldungen') {
       var data = {
         anzahl: features.length,
@@ -130,85 +197,12 @@ map.on('click', function(ev) {
       for (const insect of features) {
         data.meldung.push({ 'artname': insect.properties.artname, 'anzahl': insect.properties.anzahl, 'lebensraum': insect.properties.lebensraum });
       }
-      $('#details').html(meldungTemplate(data));
-      var outerHeightMeldung = $('#details').outerHeight(!0);
-      $('#details').css('bottom', 2 * outerHeightMeldung);
-      $('#details-close').click(function() {
-        $('#details').css('bottom', -outerHeightMeldung);
-      });
-      $('#details').css('bottom', '60px');
-      $(window).width() < 599
-        ? $('#details').css('bottom', '0px')
-        : $('#details').css('bottom', '60px');
+      showPopup(meldungTemplate, data);
+    } else if (id === 'bundeslaender') {
+      showPopup(bundeslandTemplate, props);
     } else {
-      var url = 'https://de.wikipedia.org/w/api.php';
-      $.ajax({
-        dataType: 'json',
-        url: url,
-        async: false,
-        method: 'GET',
-        headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
-        // https://de.wikipedia.org/w/api.php
-        data: {
-          action: 'query',
-          format: 'json',
-          formatversion: 2,
-          prop: 'extracts|pageimages|info|redirects|imageinfo',
-          pithumbsize: 300,
-          exintro: true,
-          inprop: 'url',
-          redirects: true,
-          origin: '*',
-          titles: props.gattung + ' ' + props.taxon
-        },
-        cache: true,
-        success: function(data) {
-          if (data.query) {
-            props.wikititle = data.query.pages[0].title;
-            if (data.query.pages[0].extract !== undefined) {
-              props.beschreibung = data.query.pages[0].extract.trim();
-            }
-            if (data.query.pages[0].thumbnail !== undefined) {
-              props.bild = data.query.pages[0].thumbnail.source;
-              props.bilddatei = data.query.pages[0].pageimage;
-
-              // https://commons.wikimedia.org/w/api.php?&action=query&prop=imageinfo&titles=File:Vespa_crabro_80708.jpg&format=json&iiprop=user|extmetadata
-              $.ajax({
-                dataType: 'json',
-                url: url,
-                async: false,
-                method: 'GET',
-                headers: { 'Api-User-Agent': 'insektensommer.de/1.0' },
-                // https://de.wikipedia.org/w/api.php
-                data: {
-                  action: 'query',
-                  format: 'json',
-                  prop: 'imageinfo',
-                  titles: 'File:' + data.query.pages[0].pageimage,
-                  iiprop: 'user|extmetadata',
-                  origin: '*'
-                },
-                cache: true,
-                success: function(data) {
-                  props.bilduser = data.query.pages['-1'].imageinfo[0].user;
-                  props.bildname = data.query.pages['-1'].imageinfo[0].extmetadata.ObjectName.value;
-                  props.bildlizenz = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseShortName.value;
-                  props.bildlizenzurl = data.query.pages['-1'].imageinfo[0].extmetadata.LicenseUrl.value;
-                }
-              });
-            }
-            $('#details').html(fundTemplate(props));
-            var outerHeightFund = $('#details').outerHeight(!0);
-            $('#details').css('bottom', 2 * -outerHeightFund);
-            $(window).width() < 599
-              ? $('#details').css('bottom', '0px')
-              : $('#details').css('bottom', '60px');
-            $('#details-close').click(function() {
-              $('#details').css('bottom', 2 * -outerHeightFund);
-            });
-          }
-        }
-      });
+      getWikiInfos(props);
+      showPopup(fundTemplate, props);
     }
   } else {
     let oh = $('#details').outerHeight(!0);
@@ -216,48 +210,29 @@ map.on('click', function(ev) {
   }
 });
 
-map.on('load', function() {
-  $('#sidebar').css('left', '50px');
-  $.ajax({
-    url: 'data/beobachtungen.csv',
-    method: 'GET',
-    success: function(data) {
-      makeGeoJSON(data);
-      $('#mySpinner').hide();
+function top100(data) {
+  const unique = new Map();
+  data.features.forEach(item => {
+    const entry = unique.get(item.properties.artname);
+    if (!entry) {
+      unique.set(item.properties.artname, {
+        artname: item.properties.artname,
+        anzahl: 1
+      });
+    } else {
+      ++entry.anzahl;
     }
   });
-
-  function makeGeoJSON(csvString) {
-    csv2geojson.csv2geojson(
-      csvString,
-      function(err, data) {
-        // err has any parsing errors
-        // data is the data.
-        if (err) {
-          console.log(err);
-        }
-        const unique = new Map();
-        data.features.forEach(item => {
-          const entry = unique.get(item.properties.artname);
-          if (!entry) {
-            unique.set(item.properties.artname, {
-              artname: item.properties.artname,
-              anzahl: 1
-            });
-          } else {
-            ++entry.anzahl;
-          }
-        });
-        const top100 = [...unique.values()];
-        top100.sort(function(a, b) {
-          return b.anzahl - a.anzahl;
-        });
-        let i = 0;
-        for (let n of top100) {
-          // die Sequence bei 100 abbrechen
-          if (i < 100) {
-            $('#top').append(
-              '<div class="layer layer-legend ' +
+  const top100 = [...unique.values()];
+  top100.sort(function(a, b) {
+    return b.anzahl - a.anzahl;
+  });
+  let i = 0;
+  for (let n of top100) {
+    // die Sequence bei 100 abbrechen
+    if (i < 100) {
+      $('#top').append(
+        '<div class="layer layer-legend ' +
                 n.artname +
                 '"> \
           <style>.circle.' +
@@ -285,31 +260,87 @@ map.on('load', function() {
                 '" class="checkbox-label" data-off="aus" data-on="an" />\
             </div>\
           </div>'
-            );
-            i++;
-          } else {
-            break;
-          }
-        }
-        var dummy = [];
-        data.features.forEach(function(feat) {
-          dummy.push([
-            feat.geometry.coordinates[1],
-            feat.geometry.coordinates[0]
-          ]);
-        });
+      );
+      i++;
+    } else {
+      break;
+    }
+  }
+}
+function setAnzahlMeldungen(data) {
+  var dummy = [];
+  data.features.forEach(function(feat) {
+    dummy.push([
+      feat.geometry.coordinates[1],
+      feat.geometry.coordinates[0]
+    ]);
+  });
 
-        var anzahlMeldungen = dummy
-          .map(JSON.stringify)
-          .reverse()
-          .filter(function(e, i, a) {
-            return a.indexOf(e, i + 1) === -1;
-          })
-          .reverse()
-          .map(JSON.parse);
-        $('span.meldungen').text(
-          ' Alle Meldungen (' + anzahlMeldungen.length + ')'
-        );
+  var anzahlMeldungen = dummy
+    .map(JSON.stringify)
+    .reverse()
+    .filter(function(e, i, a) {
+      return a.indexOf(e, i + 1) === -1;
+    })
+    .reverse()
+    .map(JSON.parse);
+  $('span.meldungen').text(
+    ' Alle Meldungen (' + anzahlMeldungen.length + ')'
+  );
+}
+
+function top5bundesland(data, bundesland) {
+  const bl = data.features.filter(feature => feature.properties.bundesland === bundesland);
+  const map = new Map();
+  bl.forEach(item => {
+    const entry = map.get(item.properties.artname);
+    if (!entry) {
+      map.set(item.properties.artname, { artname: item.properties.artname, anzahl: 1 });
+    } else {
+      ++entry.anzahl;
+    }
+  });
+  const top = [...map.values()];
+  top.sort(function(a, b) {
+    return b.anzahl - a.anzahl;
+  });
+  let top5 = top.slice(0, 5);
+  return top5;
+}
+
+function bundeslaenderTOP5(data) {
+  var bl = [...new Set(data.features.map(feature => feature.properties.bundesland))];
+  var t5 = []
+  for (let l of bl) {
+    t5.push({ [l]: top5bundesland(data, l) })
+  }
+  return t5;
+}
+
+map.on('load', function() {
+  $('#sidebar').css('left', '50px');
+  $.ajax({
+    url: 'data/beobachtungen.csv',
+    method: 'GET',
+    success: function(data) {
+      makeGeoJSON(data);
+      $('#mySpinner').hide();
+    }
+  });
+
+  function makeGeoJSON(csvString) {
+    csv2geojson.csv2geojson(
+      csvString,
+      function(err, data) {
+        // err has any parsing errors
+        // data is the data.
+        if (err) {
+          console.log(err);
+        }
+        top100(data);
+        setAnzahlMeldungen(data);
+
+        console.log(bundeslaenderTOP5(data));
 
         map.addSource('funde', { type: 'geojson', data: data });
 
