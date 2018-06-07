@@ -199,6 +199,8 @@ map.on('click', function(ev) {
       }
       showPopup(meldungTemplate, data);
     } else if (id === 'bundeslaender') {
+      var fs = map.querySourceFeatures('funde');
+      console.log(bundeslaenderTOP5(fs));
       showPopup(bundeslandTemplate, props);
     } else {
       getWikiInfos(props);
@@ -210,9 +212,9 @@ map.on('click', function(ev) {
   }
 });
 
-function top100(data) {
+function top100(features) {
   const unique = new Map();
-  data.features.forEach(item => {
+  features.forEach(item => {
     const entry = unique.get(item.properties.artname);
     if (!entry) {
       unique.set(item.properties.artname, {
@@ -296,9 +298,9 @@ function top100(data) {
     }
   });
 }
-function setAnzahlMeldungen(data) {
+function setAnzahlMeldungen(features) {
   var dummy = [];
-  data.features.forEach(function(feat) {
+  features.forEach(function(feat) {
     dummy.push([
       feat.geometry.coordinates[1],
       feat.geometry.coordinates[0]
@@ -318,8 +320,8 @@ function setAnzahlMeldungen(data) {
   );
 }
 
-function top5bundesland(data, bundesland) {
-  const bl = data.features.filter(feature => feature.properties.bundesland === bundesland);
+function top5bundesland(features, bundesland) {
+  const bl = features.filter(feature => feature.properties.bundesland === bundesland);
   const map = new Map();
   bl.forEach(item => {
     const entry = map.get(item.properties.artname);
@@ -337,11 +339,11 @@ function top5bundesland(data, bundesland) {
   return top5;
 }
 
-function bundeslaenderTOP5(data) {
-  var bl = [...new Set(data.features.map(feature => feature.properties.bundesland))];
+function bundeslaenderTOP5(features) {
+  var bl = [...new Set(features.map(feature => feature.properties.bundesland))];
   var t5 = []
   for (let l of bl) {
-    t5.push({ [l]: top5bundesland(data, l) })
+    t5.push({ [l]: top5bundesland(features, l) })
   }
   return t5;
 }
@@ -366,10 +368,8 @@ map.on('load', function() {
         if (err) {
           console.log(err);
         }
-        top100(data);
-        setAnzahlMeldungen(data);
-
-        console.log(bundeslaenderTOP5(data));
+        top100(data.features);
+        setAnzahlMeldungen(data.features);
 
         map.addSource('funde', { type: 'geojson', data: data });
 
