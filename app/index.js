@@ -199,9 +199,12 @@ map.on('click', function(ev) {
       }
       showPopup(meldungTemplate, data);
     } else if (id === 'bundeslaender') {
-      var fs = map.querySourceFeatures('funde');
-      console.log(bundeslaenderTOP5(fs));
-      showPopup(bundeslandTemplate, props);
+      // FIXME: Works only when layer funde is visible. But should also work when not. Strange.
+      // var fs = map.querySourceFeatures('funde');
+      var fs = map.getSource('funde')._data.features;
+      var bltop5 = bundeslaenderTOP5(fs);
+      var item = bltop5.find(item => item.name.includes(props.GEN));
+      showPopup(bundeslandTemplate, item);
     } else {
       getWikiInfos(props);
       showPopup(fundTemplate, props);
@@ -343,7 +346,7 @@ function bundeslaenderTOP5(features) {
   var bl = [...new Set(features.map(feature => feature.properties.bundesland))];
   var t5 = []
   for (let l of bl) {
-    t5.push({ [l]: top5bundesland(features, l) })
+    t5.push({ name: l, top5: top5bundesland(features, l) })
   }
   return t5;
 }

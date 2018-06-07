@@ -752,3 +752,7 @@ section#meldung {
 .uk-transition-slide-bottom>a:hover {
     color: #0f6ecd;
 }
+
+#details>div:nth-child(2)>ol:nth-child(1){
+    text-align: left;
+}
