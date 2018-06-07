@@ -753,6 +753,6 @@ section#meldung {
     color: #0f6ecd;
 }
 
-#details>div:nth-child(2)>ol:nth-child(1){
+#details>div:nth-child(2)>ol:nth-child(1) {
     text-align: left;
 }
