@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import mapboxgl from 'mapbox-gl';
+import csv2geojson from 'csv2geojson';
 import UIkit from 'uikit';
-import GeoJSON from 'geojson';
-import gp from 'geojson-precision';
 import randomColor from 'randomcolor';
 import * as topojson from 'topojson-client';
 
@@ -220,245 +219,293 @@ map.on('click', function(ev) {
 map.on('load', function() {
   $('#sidebar').css('left', '50px');
   $.ajax({
-    dataType: 'json',
-    url: 'data/data.json',
+    url: 'data/beobachtungen.csv',
     method: 'GET',
     success: function(data) {
-      const map = new Map();
-      data.forEach(item => {
-        const entry = map.get(item.artname);
-        if (!entry) {
-          map.set(item.artname, { artname: item.artname, anzahl: 1 });
-        } else {
-          ++entry.anzahl;
-        }
-      });
-      const top100 = [...map.values()];
-      top100.sort(function(a, b) {
-        return b.anzahl - a.anzahl;
-      });
-      let i = 0;
-      for (let n of top100) {
-        // die Sequence bei 100 abbrechen
-        if (i < 100) {
-          $('#top').append('<div class="layer layer-legend ' + n.artname + '"> \
-          <style>.circle.' + n.artname.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, '') + '::before{background: ' + randomColor() + ';}</style> \
-            <div class="title"><span class="circle ' + n.artname.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, '') + '"> ' + n.artname + '</span></div>\
-            <div class="switch">\
-              <input type="checkbox" name="top100" id="' + n.artname + '" class="ios-toggle" unchecked />\
-              <label for="' + n.artname + '" class="checkbox-label" data-off="aus" data-on="an" />\
-            </div>\
-          </div>');
-          i++;
-        } else {
-          break;
-        }
-      }
       makeGeoJSON(data);
       $('#mySpinner').hide();
     }
   });
 
-  function makeGeoJSON(data) {
-    var geojson = GeoJSON.parse(data, {
-      Point: ['lat', 'lng']
-    });
-    var trimmed = gp(JSON.parse(JSON.stringify(geojson).replace(/"\s+|\s+"/g, '"')), 6);
+  function makeGeoJSON(csvString) {
+    csv2geojson.csv2geojson(
+      csvString,
+      function(err, data) {
+        // err has any parsing errors
+        // data is the data.
+        if (err) {
+          console.log(err);
+        }
+        const unique = new Map();
+        data.features.forEach(item => {
+          const entry = unique.get(item.properties.artname);
+          if (!entry) {
+            unique.set(item.properties.artname, {
+              artname: item.properties.artname,
+              anzahl: 1
+            });
+          } else {
+            ++entry.anzahl;
+          }
+        });
+        const top100 = [...unique.values()];
+        top100.sort(function(a, b) {
+          return b.anzahl - a.anzahl;
+        });
+        let i = 0;
+        for (let n of top100) {
+          // die Sequence bei 100 abbrechen
+          if (i < 100) {
+            $('#top').append(
+              '<div class="layer layer-legend ' +
+                n.artname +
+                '"> \
+          <style>.circle.' +
+                n.artname
+                  .replace(/\((.*?)\)/g, '')
+                  .replace(/\s?\/\s?/g, '')
+                  .replace(/\s/g, '') +
+                '::before{background: ' +
+                randomColor() +
+                ';}</style> \
+            <div class="title"><span class="circle ' +
+                n.artname
+                  .replace(/\((.*?)\)/g, '')
+                  .replace(/\s?\/\s?/g, '')
+                  .replace(/\s/g, '') +
+                '"> ' +
+                n.artname +
+                '</span></div>\
+            <div class="switch">\
+              <input type="checkbox" name="top100" id="' +
+                n.artname +
+                '" class="ios-toggle" unchecked />\
+              <label for="' +
+                n.artname +
+                '" class="checkbox-label" data-off="aus" data-on="an" />\
+            </div>\
+          </div>'
+            );
+            i++;
+          } else {
+            break;
+          }
+        }
+        var dummy = [];
+        data.features.forEach(function(feat) {
+          dummy.push([
+            feat.geometry.coordinates[1],
+            feat.geometry.coordinates[0]
+          ]);
+        });
 
-    var dummy = [];
-    trimmed.features.forEach(function(feat) {
-      dummy.push([
-        feat.geometry.coordinates[1],
-        feat.geometry.coordinates[0]
-      ]);
-    });
+        var anzahlMeldungen = dummy
+          .map(JSON.stringify)
+          .reverse()
+          .filter(function(e, i, a) {
+            return a.indexOf(e, i + 1) === -1;
+          })
+          .reverse()
+          .map(JSON.parse);
+        $('span.meldungen').text(
+          ' Alle Meldungen (' + anzahlMeldungen.length + ')'
+        );
 
-    var anzahlMeldungen = dummy.map(JSON.stringify).reverse().filter(function(e, i, a) { return a.indexOf(e, i + 1) === -1; }).reverse().map(JSON.parse);
-    $('span.meldungen').text(' Alle Meldungen (' + anzahlMeldungen.length + ')');
+        map.addSource('funde', { type: 'geojson', data: data });
 
-    map.addSource('funde', { type: 'geojson', data: trimmed });
-
-    $('input[name=top100]').change(function() {
-      var id = $(this).attr('id');
-      var elem1 = document.getElementsByClassName('circle ' + id.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, ''));
-      var style = window.getComputedStyle(elem1[0], ':before').getPropertyValue('background-color');
-      if (map.getLayer(id) === undefined) {
         map.addLayer({
-          id: id,
+          id: 'meldungen',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'visible'
+          },
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#762a83',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+
+        map.addLayer({
+          id: 'garten',
           source: 'funde',
           type: 'circle',
           layout: {
             visibility: 'none'
           },
-          filter: ['==', 'artname', id],
+          filter: ['==', 'lebensraum', 'Garten'],
           paint: {
             'circle-radius': 6,
-            'circle-color': style,
+            'circle-color': '#e31a1c',
             'circle-stroke-color': '#ffffff',
             'circle-stroke-width': 1
           }
         });
-        layers.push(id);
-      }
 
-      if ($(this).is(':checked')) {
-        map.setLayoutProperty(id, 'visibility', 'visible');
-      } else {
-        map.setLayoutProperty(id, 'visibility', 'none');
-      }
-    });
+        map.addLayer({
+          id: 'balkon',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Balkon'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#fb9a99',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'park',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Park'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#fbdf6f',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'wiese',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Wiese'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#b2df8a',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'wald',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Wald'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#33a02c',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'feld',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Feld'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#ff7f00',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'teich',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Teich'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#a6cee3',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'bachfluss',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Bach/Fluss'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#1f78b4',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        map.addLayer({
+          id: 'sonstiges',
+          source: 'funde',
+          type: 'circle',
+          layout: {
+            visibility: 'none'
+          },
+          filter: ['==', 'lebensraum', ' Sonstiges'],
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#cab2d6',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        });
+        $('input[name=top100]').change(function() {
+          var id = $(this).attr('id');
+          var elem1 = document.getElementsByClassName('circle ' + id.replace(/\((.*?)\)/g, '').replace(/\s?\/\s?/g, '').replace(/\s/g, ''));
+          var style = window.getComputedStyle(elem1[0], ':before').getPropertyValue('background-color');
+          if (map.getLayer(id) === undefined) {
+            map.addLayer({
+              id: id,
+              source: 'funde',
+              type: 'circle',
+              layout: {
+                visibility: 'none'
+              },
+              filter: ['==', 'artname', id],
+              paint: {
+                'circle-radius': 6,
+                'circle-color': style,
+                'circle-stroke-color': '#ffffff',
+                'circle-stroke-width': 1
+              }
+            });
+            layers.push(id);
+          }
 
-    map.addLayer({
-      id: 'meldungen',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'visible'
-      },
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#762a83',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
+          if ($(this).is(':checked')) {
+            map.setLayoutProperty(id, 'visibility', 'visible');
+          } else {
+            map.setLayoutProperty(id, 'visibility', 'none');
+          }
+        });
+        $('input[name=lebensraum]').change(function() {
+          // TODO: Fixed input handling.
+          // map.setLayoutProperty('meldungen', 'visibility', 'none');
+          // $('#meldungen').attr('checked', false);
+          var id = $(this).attr('id');
+          if ($(this).is(':checked')) {
+            map.setLayoutProperty(id, 'visibility', 'visible');
+          } else {
+            map.setLayoutProperty(id, 'visibility', 'none');
+          }
+        });
       }
-    });
-
-    map.addLayer({
-      id: 'garten',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Garten'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#e31a1c',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-
-    map.addLayer({
-      id: 'balkon',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Balkon'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#fb9a99',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'park',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Park'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#fbdf6f',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'wiese',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Wiese'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#b2df8a',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'wald',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Wald'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#33a02c',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'feld',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Feld'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#ff7f00',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'teich',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Teich'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#a6cee3',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'bachfluss',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Bach/Fluss'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#1f78b4',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
-    map.addLayer({
-      id: 'sonstiges',
-      source: 'funde',
-      type: 'circle',
-      layout: {
-        visibility: 'none'
-      },
-      filter: ['==', 'lebensraum', 'Sonstiges'],
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#cab2d6',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 1
-      }
-    });
+    );
   }
 
   $.ajax({
@@ -584,18 +631,6 @@ map.on('load', function() {
 //
 
 $('input[name=insektensommer]').change(function() {
-  var id = $(this).attr('id');
-  if ($(this).is(':checked')) {
-    map.setLayoutProperty(id, 'visibility', 'visible');
-  } else {
-    map.setLayoutProperty(id, 'visibility', 'none');
-  }
-});
-
-$('input[name=lebensraum]').change(function() {
-  // TODO: Fixed input handling.
-  // map.setLayoutProperty('meldungen', 'visibility', 'none');
-  // $('#meldungen').attr('checked', false);
   var id = $(this).attr('id');
   if ($(this).is(':checked')) {
     map.setLayoutProperty(id, 'visibility', 'visible');
