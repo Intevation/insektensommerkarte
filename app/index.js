@@ -210,7 +210,20 @@ map.on('click', function(ev) {
       // var fs = map.querySourceFeatures('funde');
       var fs = map.getSource('funde')._data.features;
       var bltop5 = bundeslaenderTOP5(fs);
-      var item = bltop5.find(item => item.name.includes(props.GEN));
+      var item = bltop5.find(
+        function isCherries(item) {
+          console.log(item.name);
+          console.log(props);
+          if (props.GEN === 'Sachsen-Anhalt') {
+            return item.name === 'Sachsen-Anhalt';
+          } else if (props.GEN === 'Sachsen') {
+            return item.name === 'Sachsen';
+          } else {
+            return item.name.includes(props.GEN)
+          }
+        }
+      );
+      // var item = bltop5.find(item => props.GEN === "Sachsen-Anhalt" ? item.name.includes("Sachsen-Anhalt"): item.name.include(props.GEN));
 
       var chart = new tauCharts.Chart({
         plugins: [
