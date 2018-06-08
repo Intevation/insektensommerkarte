@@ -212,8 +212,6 @@ map.on('click', function(ev) {
       var bltop5 = bundeslaenderTOP5(fs);
       var item = bltop5.find(
         function isCherries(item) {
-          console.log(item.name);
-          console.log(props);
           if (props.GEN === 'Sachsen-Anhalt') {
             return item.name === 'Sachsen-Anhalt';
           } else if (props.GEN === 'Sachsen') {
