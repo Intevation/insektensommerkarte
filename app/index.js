@@ -557,7 +557,7 @@ map.on('load', function() {
           layout: {
             visibility: 'none'
           },
-          filter: ['==', 'lebensraum', ' Sonstiges'],
+          filter: ['any', ['==', 'lebensraum', ' Sonstiges'], ['==', 'lebensraum', '']],
           paint: {
             'circle-radius': 6,
             'circle-color': '#cab2d6',
