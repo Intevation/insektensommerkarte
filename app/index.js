@@ -101,7 +101,7 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
-let layers = ['bundeslaender', 'meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+let layers = ['state-fills', 'meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
 
 function showPopup(template, props, chart) {
   $('#details').html(template(props));
@@ -205,7 +205,7 @@ map.on('click', function(ev) {
         data.meldung.push({ 'artname': insect.properties.artname, 'anzahl': insect.properties.anzahl, 'lebensraum': insect.properties.lebensraum });
       }
       showPopup(meldungTemplate, data);
-    } else if (id === 'bundeslaender') {
+    } else if (id === 'state-fills') {
       // FIXME: Works only when layer funde is visible. But should also work when not. Strange.
       // var fs = map.querySourceFeatures('funde');
       var fs = map.getSource('funde')._data.features;
@@ -582,17 +582,58 @@ map.on('load', function() {
       });
 
       map.addLayer({
-        id: 'bundeslaender',
-        source: 'bundeslaender_source',
+        id: 'state-fills',
         type: 'fill',
+        source: 'bundeslaender_source',
         layout: {
           visibility: 'none'
         },
         paint: {
-          'fill-outline-color': '#037AFF',
           'fill-color': '#ffffff',
-          'fill-opacity': 0.25
+          'fill-opacity': 0.5
         }
+      });
+
+      map.addLayer({
+        id: 'state-borders',
+        type: 'line',
+        source: 'bundeslaender_source',
+        layout: {
+          visibility: 'none'
+        },
+        paint: {
+          'line-color': '#037AFF',
+          'line-width': 1
+        }
+      });
+
+      map.addLayer({
+        id: 'state-fills-hover',
+        type: 'fill',
+        source: 'bundeslaender_source',
+        layout: {
+          visibility: 'none'
+        },
+        paint: {
+          'fill-color': '#627BC1',
+          'fill-opacity': 0.25
+        },
+        filter: ['==', 'GEN', '']
+      });
+
+      // When the user moves their mouse over the states-fill layer, we'll update the filter in
+      // the state-fills-hover layer to only show the matching state, thus making a hover effect.
+      map.on('mousemove', 'state-fills', function(e) {
+        map.setFilter('state-fills-hover', [
+          '==',
+          'GEN',
+          e.features[0].properties.GEN
+        ]);
+      });
+
+      // Reset the state-fills-hover layer's filter when the mouse leaves the layer.
+      map.on('mouseleave', 'state-fills', function() {
+        map.setFilter('state-fills-hover', ['==', 'GEN', '']);
       });
     }
   });
@@ -696,9 +737,13 @@ $('input[name=insektensommer]').change(function() {
 
 $('input[name=bundeslaender]').change(function() {
   if ($(this).is(':checked')) {
-    map.setLayoutProperty('bundeslaender', 'visibility', 'visible');
+    map.setLayoutProperty('state-fills', 'visibility', 'visible');
+    map.setLayoutProperty('state-fills-hover', 'visibility', 'visible');
+    map.setLayoutProperty('state-borders', 'visibility', 'visible');
   } else {
-    map.setLayoutProperty('bundeslaender', 'visibility', 'none');
+    map.setLayoutProperty('state-fills', 'visibility', 'none');
+    map.setLayoutProperty('state-fills-hover', 'visibility', 'none');
+    map.setLayoutProperty('state-borders', 'visibility', 'none');
   }
 });
 
