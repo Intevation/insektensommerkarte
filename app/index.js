@@ -229,7 +229,7 @@ map.on('click', function(ev) {
         ],
         guide: {
           x: {
-            label: { text: 'Vogelart' }
+            label: { text: 'Arten' }
           },
           y: {
             label: { text: 'Meldungen' }
