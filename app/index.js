@@ -339,16 +339,16 @@ function top100(features) {
     }
   });
 }
-function setAnzahlMeldungen(features) {
-  var dummy = [];
+function anzahlMeldungen(features) {
+  var beobachtungen = [];
   features.forEach(function(feat) {
-    dummy.push([
+    beobachtungen.push([
       feat.geometry.coordinates[1],
       feat.geometry.coordinates[0]
     ]);
   });
 
-  var anzahlMeldungen = dummy
+  var meldungen = beobachtungen
     .map(JSON.stringify)
     .reverse()
     .filter(function(e, i, a) {
@@ -356,15 +356,38 @@ function setAnzahlMeldungen(features) {
     })
     .reverse()
     .map(JSON.parse);
-  $('span.meldungen').text(
-    ' Alle Meldungen (' + anzahlMeldungen.length + ')'
-  );
+  return meldungen.length;
 }
 
 function top5bundesland(features, bundesland) {
   const bl = features.filter(feature => feature.properties.bundesland === bundesland);
   const map = new Map();
   bl.forEach(item => {
+    const entry = map.get(item.properties.artname);
+    if (!entry) {
+      map.set(item.properties.artname, { artname: item.properties.artname, anzahl: 1 });
+    } else {
+      ++entry.anzahl;
+    }
+  });
+  const top = [...map.values()];
+  top.sort(function(a, b) {
+    return b.anzahl - a.anzahl;
+  });
+  let top5 = top.slice(0, 5);
+  return top5;
+}
+
+function anzahlLebensraum(features, lebensraum) {
+  let beobachtungen = features.filter(feature => feature.properties.lebensraum === lebensraum);
+
+  return { beobachtungen: beobachtungen.length, meldungen: anzahlMeldungen(beobachtungen) };
+}
+
+function lebensraumTop5(features, lebensraum) {
+  const l = features.filter(feature => feature.properties.lebensraum === lebensraum);
+  const map = new Map();
+  l.forEach(item => {
     const entry = map.get(item.properties.artname);
     if (!entry) {
       map.set(item.properties.artname, { artname: item.properties.artname, anzahl: 1 });
@@ -410,7 +433,10 @@ map.on('load', function() {
           console.log(err);
         }
         top100(data.features);
-        setAnzahlMeldungen(data.features);
+        $('span.meldungen').text(
+          ' Alle Meldungen (' + anzahlMeldungen(data.features) + ')'
+        );
+        lebensraumTop5(data.features, 'Garten');
 
         map.addSource('funde', { type: 'geojson', data: data });
 
