@@ -79,15 +79,15 @@ var map = new mapboxgl.Map({
       {
         id: 'osm',
         type: 'raster',
-        source: 'osm',
-        minzoom: 0,
-        maxzoom: 18
+        source: 'osm'
       }
     ]
   },
   center: $(window).width() < 599 ? [10.0699, 51.4379] : [6.402, 51.638],
   zoom: $(window).width() < 599 ? 3.33 : 5.33,
-  attributionControl: false
+  attributionControl: false,
+  minZoom: 5,
+  maxZoom: 16
 });
 
 map.on('mousemove', function(ev) {
