@@ -634,7 +634,7 @@ map.on('load', function() {
         type: 'fill',
         source: 'bundeslaender_source',
         layout: {
-          visibility: 'none'
+          visibility: 'visible'
         },
         paint: {
           'fill-color': '#ffffff',
@@ -647,7 +647,7 @@ map.on('load', function() {
         type: 'line',
         source: 'bundeslaender_source',
         layout: {
-          visibility: 'none'
+          visibility: 'visible'
         },
         paint: {
           'line-color': '#037AFF',
@@ -660,7 +660,7 @@ map.on('load', function() {
         type: 'fill',
         source: 'bundeslaender_source',
         layout: {
-          visibility: 'none'
+          visibility: 'visible'
         },
         paint: {
           'fill-color': '#627BC1',
