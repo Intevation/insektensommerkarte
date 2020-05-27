@@ -389,7 +389,8 @@ function top5bundesland(features, bundesland) {
     return b.anzahl - a.anzahl;
   });
   let top5 = top.slice(0, 5);
-  return top5;
+  let aM = anzahlMeldungen(bl);
+  return {'top5': top5, 'anzahlMeldungen': aM};
 }
 
 // function anzahlLebensraum(features, lebensraum) {
@@ -421,7 +422,8 @@ function bundeslaenderTOP5(features) {
   var bl = [...new Set(features.map(feature => feature.properties.bundesland))];
   var t5 = []
   for (let l of bl) {
-    t5.push({ name: l, top5: top5bundesland(features, l) })
+    let t = top5bundesland(features, l)
+    t5.push({ name: l, 'anzahlMeldungen': t.anzahlMeldungen, 'top5': t.top5 })
   }
   return t5;
 }
