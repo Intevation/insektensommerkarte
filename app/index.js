@@ -803,7 +803,7 @@ $('input[name=messtischblatt]').change(function() {
     map.setLayoutProperty('tk251', 'visibility', 'visible');
   } else {
     map.setLayoutProperty('tk25', 'visibility', 'none');
-    map.setLayoutProperty('tk251', 'visibility', 'visible');
+    map.setLayoutProperty('tk251', 'visibility', 'none');
   }
 });
 
