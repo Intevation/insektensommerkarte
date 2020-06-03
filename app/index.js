@@ -356,10 +356,9 @@ function top100(features) {
 function anzahlMeldungen(features) {
   var beobachtungen = [];
   features.forEach(function(feat) {
-    beobachtungen.push([
-      feat.geometry.coordinates[1],
-      feat.geometry.coordinates[0]
-    ]);
+    beobachtungen.push(
+      feat.properties.kopfid
+    );
   });
 
   var meldungen = beobachtungen
