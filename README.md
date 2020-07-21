@@ -4,6 +4,7 @@
 
 - [insektensommerkarte](#insektensommerkarte)
   - [FTP connection](#ftp-connection)
+  - [crc32 - compute CRC-32 checksums for the given files](#crc32---compute-crc-32-checksums-for-the-given-files)
   - [Size Limit: Make the Web lighter](#size-limit-make-the-web-lighter)
   - [upgrade all the packages in your package.json](#upgrade-all-the-packages-in-your-packagejson)
 
@@ -11,6 +12,16 @@
 
 ```shell
 ncftp -u $FTP_USER -p $FTP_PASSWORD $FTP_SERVER
+```
+
+```shell
+ncftp -u $FTP_USER -p $FTP_PASSWORD ftp://$FTP_SERVER/insektensommer
+```
+
+## crc32 - compute CRC-32 checksums for the given files
+
+```shell
+crc32 dist/*
 ```
 
 ## Size Limit: Make the Web lighter
