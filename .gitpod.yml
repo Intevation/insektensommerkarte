@@ -1,10 +1,12 @@
+image:
+  file: .gitpod.Dockerfile
+
 tasks:
   - init: yarn install && yarn run build
 
 vscode:
   extensions:
-    - vscodevim.vim@1.14.3:fu5LuVjQ7KXpAaWB3dnI4w==
-    - ahmadawais.shades-of-purple@6.11.0:KTFrDyMDGv8OYeu2xSUdeQ==
+    - ahmadawais.shades-of-purple@6.12.0:phtipGVPrS5xO6knvBtr8A==
 
 ports:
   - port: 8080
