@@ -87,7 +87,7 @@ var map = new mapboxgl.Map({
   zoom: $(window).width() < 599 ? 3.33 : 5.33,
   attributionControl: false,
   minZoom: 5,
-  maxZoom: 16
+  maxZoom: 18
 });
 
 map.on('mousemove', function(ev) {
@@ -115,7 +115,7 @@ map.addControl(new mapboxgl.ScaleControl({
   unit: 'metric'
 }));
 
-let layers = ['state-fills', 'meldungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
+let layers = ['state-fills', 'beobachtungen', 'garten', 'balkon', 'park', 'wiese', 'wald', 'feld', 'teich', 'bachfluss', 'sonstiges', 'tk25']
 
 function showPopup(template, props, chart) {
   $('#details').html(template(props));
@@ -204,9 +204,12 @@ map.on('click', function(ev) {
     let props = features[0].properties;
     if (id === 'tk25') {
       showPopup(tk25Template, props);
-    } else if (id === 'meldungen') {
+    } else if (id === 'beobachtungen') {
+      console.log(features)
+      const results = features.filter(f => f.layer.id === 'beobachtungen');
+      console.log(results)
       var data = {
-        anzahl: features.length,
+        anzahl: results.length,
         ppl: function() {
           return (this.anzahl === 1) ? 'Beobachtung' : 'Beobachtungen'
         },
@@ -215,14 +218,14 @@ map.on('click', function(ev) {
         },
         meldung: []
       };
-      for (const insect of features) {
+      for (const insect of results) {
         data.meldung.push({ 'artname': insect.properties.artname, 'anzahl': insect.properties.anzahl, 'lebensraum': insect.properties.lebensraum });
       }
       showPopup(meldungTemplate, data);
     } else if (id === 'state-fills') {
-      // FIXME: Works only when layer funde is visible. But should also work when not. Strange.
-      // var fs = map.querySourceFeatures('funde');
-      var fs = map.getSource('funde')._data.features;
+      // FIXME: Works only when layer beobachtungen is visible. But should also work when not. Strange.
+      // var fs = map.querySourceFeatures('beobachtungen');
+      var fs = map.getSource('beobachtungen')._data.features;
       var bltop5 = bundeslaenderTOP5(fs);
       var item = bltop5.find(
         function isCherries(item) {
@@ -330,7 +333,7 @@ function top100(features) {
     if (map.getLayer(id) === undefined) {
       map.addLayer({
         id: id,
-        source: 'funde',
+        source: 'beobachtungen',
         type: 'circle',
         layout: {
           visibility: 'none'
@@ -456,16 +459,19 @@ map.on('load', function() {
           console.log(err);
         }
         top100(data.features);
-        $('span.meldungen').text(
-          ' Alle Meldungen (' + anzahlMeldungen(data.features) + ')'
+        $('span.beobachtungen').text(
+          ' Beobachtungen (' + data.features.length + ')'
+        );
+        $('p.intro-sidebar').append(
+          ' Insgesamt sind <b>' + anzahlMeldungen(data.features) + ' Meldungen </b> eingegangen.'
         );
         lebensraumTop5(data.features, 'Garten');
 
-        map.addSource('funde', { type: 'geojson', data: data });
+        map.addSource('beobachtungen', { type: 'geojson', data: data });
 
         map.addLayer({
-          id: 'meldungen',
-          source: 'funde',
+          id: 'beobachtungen',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'visible'
@@ -480,7 +486,7 @@ map.on('load', function() {
 
         map.addLayer({
           id: 'garten',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -496,7 +502,7 @@ map.on('load', function() {
 
         map.addLayer({
           id: 'balkon',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -511,7 +517,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'park',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -526,7 +532,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'wiese',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -541,7 +547,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'wald',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -556,7 +562,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'feld',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -571,7 +577,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'teich',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -586,7 +592,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'bachfluss',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -601,7 +607,7 @@ map.on('load', function() {
         });
         map.addLayer({
           id: 'sonstiges',
-          source: 'funde',
+          source: 'beobachtungen',
           type: 'circle',
           layout: {
             visibility: 'none'
@@ -830,8 +836,8 @@ $('input[name=baselayer]').change(function() {
 
 $('input[name=lebensraum]').change(function() {
   // TODO: Fixed input handling.
-  // map.setLayoutProperty('meldungen', 'visibility', 'none');
-  // $('#meldungen').attr('checked', false);
+  // map.setLayoutProperty('beobachtungen', 'visibility', 'none');
+  // $('#beobachtungen').attr('checked', false);
   var id = $(this).attr('id');
   if ($(this).is(':checked')) {
     map.setLayoutProperty(id, 'visibility', 'visible');
