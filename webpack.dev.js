@@ -17,9 +17,9 @@ module.exports = function(env, argv) {
     // devtool: 'eval-source-map',
     devtool: 'eval-source-map',
     devServer: {
+      disableHostCheck: true,
       compress: true,
-      port: 9000,
-      host: '0.0.0.0',
+      port: 8080,
       clientLogLevel: 'error'
     },
     performance: {
