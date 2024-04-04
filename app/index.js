@@ -373,14 +373,13 @@ function anzahlMeldungen(features) {
     .reverse()
     .map(JSON.parse);
 
-  return meldungen.length.toLocaleString("de-DE");
+  return meldungen.length.toLocaleString('de-DE');
 }
 
 function anzahlIndividuen(features) {
   var summe = 0;
-  features.forEach(item => summe+=parseInt(item.properties.anzahl));
-  
-  return summe.toLocaleString("de-DE")
+  features.forEach((item) => { summe += parseInt(item.properties.anzahl) });
+  return summe.toLocaleString('de-DE')
 }
 
 function top5bundesland(features, bundesland) {
@@ -442,7 +441,7 @@ map.on('load', function() {
   $('#sidebar').css('left', '50px');
   $.ajax({
     url: 'data/beobachtungen-' + param + '.csv',
-    //url: "https://karten.nabu.de/insektensommer/data/beobachtungen-" + param + '.csv',
+    //  url: "https://karten.nabu.de/insektensommer/data/beobachtungen-" + param + '.csv',
     method: 'GET',
     success: function(data) {
       makeGeoJSON(data);
@@ -469,10 +468,10 @@ map.on('load', function() {
         }
         top100(data.features);
         $('span.beobachtungen').text(
-          ' Beobachtungen (' + anzahlMeldungen(data.features) + ')' //data.features.length
+          ' Beobachtungen (' + anzahlMeldungen(data.features) + ')' // data.features.length
         );
         $('p.intro-sidebar').append(
-          ' Insgesamt sind <b>' + anzahlMeldungen(data.features) + ' Meldungen </b> eingegangen mit <b>' + anzahlIndividuen(data.features) + '</b> Individuen eingegangen.' 
+          ' Insgesamt sind <b>' + anzahlMeldungen(data.features) + ' Meldungen </b> eingegangen mit <b>' + anzahlIndividuen(data.features) + '</b> Individuen eingegangen.'
         );
         lebensraumTop5(data.features, 'Garten');
 
