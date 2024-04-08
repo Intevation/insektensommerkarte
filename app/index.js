@@ -471,7 +471,7 @@ map.on('load', function() {
           ' Beobachtungen (' + anzahlMeldungen(data.features) + ')' // data.features.length
         );
         $('p.intro-sidebar').append(
-          ' Insgesamt sind <b>' + anzahlMeldungen(data.features) + ' Meldungen </b> eingegangen mit <b>' + anzahlIndividuen(data.features) + '</b> Individuen eingegangen.'
+          ' Insgesamt sind <b>' + anzahlMeldungen(data.features) + ' Meldungen</b> mit <b>' + anzahlIndividuen(data.features) + ' Individuen</b> eingegangen.'
         );
         lebensraumTop5(data.features, 'Garten');
 
